@@ -1,13 +1,172 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum ImageType {
+  XRay
+  CT
+  MRI
+  ClinicalPhoto
+  Diagram
+}
+
+model User {
+  Id                String    @id @default(uuid())
+  UserName          String    @unique
+  Email             String    @unique
+  PasswordHash      String
+  XpTotal           Int       @default(0)
+  CurrentStreak     Int       @default(0)
+  LongestStreak     Int       @default(0)
+  LastCompletedDate DateTime?
+
+  UserAttempt UserAttempt[]
+}
+
+model Specialty {
+  Id   String @id @default(uuid())
+  Name String @unique
+
+  Cases Case[]
+}
+
+model Diagnosis {
+  Id   String @id @default(uuid())
+  Name String @unique
+
+  Cases       Case[]
+  UserAttempt UserAttempt[]
+}
+
+model Test {
+  Id   String @id @default(uuid())
+  Name String @unique
+
+  CaseTests CaseTest[]
+}
+
+model Treatment {
+  Id   String @id @default(uuid())
+  Name String @unique
+
+  CaseTreatments CaseTreatment[]
+}
+
+model Case {
+  Id                   String     @id @default(uuid())
+  Title                String
+  PatientHistory       String
+  Difficulty           Difficulty
+  DiagnosisExplanation String
+  CreatedAt            DateTime   @default(now())
+  AiGenerated          Boolean    @default(false)
+
+  DiagnosisId String
+  SpecialtyId String
+
+  Diagnosis      Diagnosis       @relation(fields: [DiagnosisId], references: [Id])
+  Specialty      Specialty       @relation(fields: [SpecialtyId], references: [Id])
+  UserAttempt    UserAttempt[]
+  CaseTests      CaseTest[]
+  CaseTreatments CaseTreatment[]
+  CaseImages     CaseImage[]
+  DailyCases     DailyCase[]
+}
+
+model CaseTest {
+  CaseId    String
+  TestId    String
+  IsCorrect Boolean
+
+  Case         Case          @relation(fields: [CaseId], references: [Id])
+  Test         Test          @relation(fields: [TestId], references: [Id])
+  AttemptTests AttemptTest[]
+
+  @@id([CaseId, TestId])
+  @@map("CaseTests")
+}
+
+model CaseTreatment {
+  CaseId      String
+  TreatmentId String
+  IsCorrect   Boolean
+
+  Case              Case               @relation(fields: [CaseId], references: [Id])
+  Treatment         Treatment          @relation(fields: [TreatmentId], references: [Id])
+  AttemptTreatments AttemptTreatment[]
+
+  @@id([CaseId, TreatmentId])
+  @@map("CaseTreatments")
+}
+
+model CaseImage {
+  Id        String    @id @default(uuid())
+  Url       String
+  ImageType ImageType
+
+  CaseId String
+  Case   Case   @relation(fields: [CaseId], references: [Id])
+
+  @@map("CaseImages")
+}
+
+model DailyCase {
+  Id   String   @id @default(uuid())
+  Date DateTime @unique
+
+  CaseId String
+  Case   Case   @relation(fields: [CaseId], references: [Id])
+}
+
+model UserAttempt {
+  Id          String    @id @default(uuid())
+  Score       Float
+  XpEarned    Int
+  StartedAt   DateTime
+  CompletedAt DateTime?
+
+  UserId            String
+  CaseId            String
+  ChosenDiagnosisId String
+
+  User      User      @relation(fields: [UserId], references: [Id])
+  Case      Case      @relation(fields: [CaseId], references: [Id])
+  Diagnosis Diagnosis @relation(fields: [ChosenDiagnosisId], references: [Id])
+
+  AttemptTests      AttemptTest[]
+  AttemptTreatments AttemptTreatment[]
+}
+
+model AttemptTest {
+  AttemptId String
+  CaseId    String
+  TestId    String
+
+  Attempt  UserAttempt @relation(fields: [AttemptId], references: [Id])
+  CaseTest CaseTest    @relation(fields: [CaseId, TestId], references: [CaseId, TestId])
+
+  @@id([AttemptId, CaseId, TestId])
+  @@map("AttemptTests")
+}
+
+model AttemptTreatment {
+  AttemptId   String
+  CaseId      String
+  TreatmentId String
+
+  Attempt       UserAttempt   @relation(fields: [AttemptId], references: [Id])
+  CaseTreatment CaseTreatment @relation(fields: [CaseId, TreatmentId], references: [CaseId, TreatmentId])
+
+  @@id([AttemptId, CaseId, TreatmentId])
+  @@map("AttemptTreatments")
 }
