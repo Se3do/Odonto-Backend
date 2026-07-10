@@ -1,3 +1,4 @@
+import { Role } from "../../src/modules/auth/enums/roles.enum";
 import { ids } from "./ids";
 
 export const seedConfig = {
@@ -43,7 +44,8 @@ export const users = [
     id: ids.users.admin,
     userName: "admin",
     email: "admin@odonto.test",
-    passwordHash: seedConfig.passwordHash,
+    passwordHash: "$2b$12$W/d6QJamB8Zpm5UWFTnbruqR6MW05ftnIUPnx6bau/fqbVPC.dxme",
+    Role: Role.Admin,
     xpTotal: 1200,
     currentStreak: 7,
     longestStreak: 12,
@@ -54,6 +56,7 @@ export const users = [
     userName: "assistant",
     email: "assistant@odonto.test",
     passwordHash: seedConfig.passwordHash,
+    Role: Role.User,
     xpTotal: 300,
     currentStreak: 2,
     longestStreak: 5,

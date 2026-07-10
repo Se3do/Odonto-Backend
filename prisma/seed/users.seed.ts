@@ -9,6 +9,7 @@ export async function seedUsers(prisma: PrismaClient) {
       UserName: user.userName,
       Email: user.email,
       PasswordHash: user.passwordHash,
+      Role: user.Role,
       XpTotal: user.xpTotal,
       CurrentStreak: user.currentStreak,
       LongestStreak: user.longestStreak,
