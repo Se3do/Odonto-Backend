@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { AuthResponseDto } from '../dto/auth-response.dto';
 import { LoginDto } from '../dto/login.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { RegisterDto } from '../dto/register.dto';
+import { Role } from '../enums/roles.enum';
 import { PasswordService } from './password.service';
 import { TokenService } from './token.service';
 
@@ -40,17 +42,11 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
-    const user = await this.findUserForLogin(loginDto.email);
-    const passwordIsValid = await this.passwordService.compare(
-      loginDto.password,
-      user.PasswordHash,
-    );
+    return this.authenticate(loginDto);
+  }
 
-    if (!passwordIsValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    return this.issueTokensForUser(user);
+  async adminLogin(loginDto: LoginDto): Promise<AuthResponseDto> {
+    return this.authenticate(loginDto, Role.Admin);
   }
 
   async refresh(refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
@@ -71,11 +67,33 @@ export class AuthService {
     return this.usersService.findById(userId);
   }
 
+  private async authenticate(
+    loginDto: LoginDto,
+    requiredRole?: Role,
+  ): Promise<AuthResponseDto> {
+    const user = await this.findUserForLogin(loginDto.email);
+    const passwordIsValid = await this.passwordService.compare(
+      loginDto.password,
+      user.PasswordHash,
+    );
+
+    if (!passwordIsValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (requiredRole && user.Role !== requiredRole) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    return this.issueTokensForUser(user);
+  }
+
   private async issueTokensForUser(user: User): Promise<AuthResponseDto> {
     const accessToken = await this.tokenService.signAccessToken({
       sub: user.Id,
       email: user.Email,
       username: user.UserName,
+      role: user.Role,
     });
     const refreshToken = await this.tokenService.signRefreshToken({
       sub: user.Id,

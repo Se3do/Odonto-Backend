@@ -29,6 +29,11 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  @Post('admin/login')
+  adminLogin(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
+    return this.authService.adminLogin(loginDto);
+  }
+
   @Post('refresh')
   refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
     return this.authService.refresh(refreshTokenDto);
