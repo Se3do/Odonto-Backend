@@ -6,6 +6,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 enum Difficulty {
   EASY
   MEDIUM
@@ -25,8 +30,12 @@ model User {
   UserName          String    @unique
   Email             String    @unique
   PasswordHash      String
+
+  Role              UserRole  @default(USER)
+
   RefreshTokenHash  String?
   RefreshTokenExpiresAt DateTime?
+
   XpTotal           Int       @default(0)
   CurrentStreak     Int       @default(0)
   LongestStreak     Int       @default(0)
