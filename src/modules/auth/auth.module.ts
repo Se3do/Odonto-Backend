@@ -11,6 +11,12 @@ import { RolesGuard } from './guards/roles.guard';
 @Module({
   imports: [UsersModule, JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, PasswordService, TokenService, AccessTokenGuard, RolesGuard],
+  providers: [
+    AuthService,
+    PasswordService,
+    TokenService,
+    AccessTokenGuard,
+    RolesGuard,
+  ],
 })
 export class AuthModule {}
