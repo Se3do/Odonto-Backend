@@ -4,6 +4,7 @@ import { PrismaModule } from './common/database/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { SpecialtiesModule } from './modules/specialties/specialties.module';
+import { DiagnosesModule } from './modules/diagnoses/diagnoses.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { SpecialtiesModule } from './modules/specialties/specialties.module';
     UsersModule,
     AuthModule,
     SpecialtiesModule,
+    DiagnosesModule,
   ],
   controllers: [],
   providers: [],
