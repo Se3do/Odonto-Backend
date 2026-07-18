@@ -11,7 +11,7 @@ import { AuthResponseDto } from '../dto/auth-response.dto';
 import { LoginDto } from '../dto/login.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { RegisterDto } from '../dto/register.dto';
-import { Role } from '../enums/roles.enum';
+import { UserRole } from '@prisma/client';
 import { PasswordService } from './password.service';
 import { TokenService } from './token.service';
 
@@ -46,7 +46,7 @@ export class AuthService {
   }
 
   async adminLogin(loginDto: LoginDto): Promise<AuthResponseDto> {
-    return this.authenticate(loginDto, Role.Admin);
+    return this.authenticate(loginDto, UserRole.ADMIN);
   }
 
   async refresh(refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
@@ -69,7 +69,7 @@ export class AuthService {
 
   private async authenticate(
     loginDto: LoginDto,
-    requiredRole?: Role,
+    requiredRole?: UserRole,
   ): Promise<AuthResponseDto> {
     const user = await this.findUserForLogin(loginDto.email);
     const passwordIsValid = await this.passwordService.compare(
