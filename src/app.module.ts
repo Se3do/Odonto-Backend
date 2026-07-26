@@ -6,6 +6,7 @@ import { UsersModule } from './modules/users/users.module';
 import { SpecialtiesModule } from './modules/specialties/specialties.module';
 import { DiagnosesModule } from './modules/diagnoses/diagnoses.module';
 import { DiagnosticTestsModule } from './modules/diagnostic-tests/diagnostic-tests.module';
+import { TreatmentsModule } from './modules/treatments/treatments.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DiagnosticTestsModule } from './modules/diagnostic-tests/diagnostic-tes
     SpecialtiesModule,
     DiagnosesModule,
     DiagnosticTestsModule,
+    TreatmentsModule,
   ],
   controllers: [],
   providers: [],
