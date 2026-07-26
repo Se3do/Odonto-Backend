@@ -2,19 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, Test } from '@prisma/client';
 import { PrismaService } from '../../../common/database/prisma.service';
 
-export interface CreateTestData {
+export interface CreateDiagnosticTestData {
   name: string;
 }
 
-export interface UpdateTestData {
+export interface UpdateDiagnosticTestData {
   name?: string;
 }
 
 @Injectable()
-export class TestsRepository {
+export class DiagnosticTestsRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  create(data: CreateTestData): Promise<Test> {
+  create(data: CreateDiagnosticTestData): Promise<Test> {
     return this.prismaService.test.create({
       data: { Name: data.name },
     });
@@ -36,7 +36,7 @@ export class TestsRepository {
     });
   }
 
-  update(id: string, data: UpdateTestData): Promise<Test> {
+  update(id: string, data: UpdateDiagnosticTestData): Promise<Test> {
     const updateData: Prisma.TestUpdateInput = {};
 
     if (data.name !== undefined) {

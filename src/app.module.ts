@@ -5,7 +5,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { SpecialtiesModule } from './modules/specialties/specialties.module';
 import { DiagnosesModule } from './modules/diagnoses/diagnoses.module';
-import { TestsModule } from './modules/tests/tests.module';
+import { DiagnosticTestsModule } from './modules/diagnostic-tests/diagnostic-tests.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { TestsModule } from './modules/tests/tests.module';
     AuthModule,
     SpecialtiesModule,
     DiagnosesModule,
-    TestsModule,
+    DiagnosticTestsModule,
   ],
   controllers: [],
   providers: [],
