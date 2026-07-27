@@ -9,6 +9,7 @@ import { AccessTokenGuard } from './guards/access-token.guard';
 import { RolesGuard } from './guards/roles.guard';
 
 @Module({
+  exports: [AccessTokenGuard, RolesGuard, TokenService],
   imports: [UsersModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [
