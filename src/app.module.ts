@@ -7,6 +7,7 @@ import { SpecialtiesModule } from './modules/specialties/specialties.module';
 import { DiagnosesModule } from './modules/diagnoses/diagnoses.module';
 import { DiagnosticTestsModule } from './modules/diagnostic-tests/diagnostic-tests.module';
 import { TreatmentsModule } from './modules/treatments/treatments.module';
+import { AttemptsModule } from './modules/attempts/attempts.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TreatmentsModule } from './modules/treatments/treatments.module';
     DiagnosesModule,
     DiagnosticTestsModule,
     TreatmentsModule,
+    AttemptsModule,
   ],
   controllers: [],
   providers: [],
