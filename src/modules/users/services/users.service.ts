@@ -173,6 +173,7 @@ export class UsersService {
       id: user.Id,
       username: user.UserName,
       email: user.Email,
+      role: user.Role,
       xpTotal: user.XpTotal,
       currentStreak: user.CurrentStreak,
       longestStreak: user.LongestStreak,

@@ -5,7 +5,7 @@ import { AttemptScoringService } from './attempt-scoring.service';
 import { XpService } from './xp.service';
 import { StreakService } from './streak.service';
 import { CreateAttemptDto } from '../dto/create-attempt.dto';
-import { AttemptResponseDto, AttemptTestGroup, AttemptTreatmentGroup } from '../dto/attempt-response.dto';
+import { AttemptResponseDto, AttemptTestGroup, AttemptTreatmentGroup, AttemptDetailDto, AttemptListItemDto } from '../dto/attempt-response.dto';
 import { ValidatedAttemptContext, ScoringResult } from '../types/attempt.types';
 
 @Injectable()
@@ -112,12 +112,52 @@ export class AttemptService {
     );
   }
 
-  async getAttemptById(id: string) {
-    return this.repository.findAttemptById(id);
+  async getAttemptById(id: string): Promise<AttemptDetailDto | null> {
+    const attempt = await this.repository.findAttemptById(id);
+    return attempt ? this.toDetailDto(attempt) : null;
   }
 
-  async getAttemptsByUserId(userId: string) {
-    return this.repository.findAttemptsByUserId(userId);
+  async getAttemptsByUserId(userId: string): Promise<AttemptListItemDto[]> {
+    const attempts = await this.repository.findAttemptsByUserId(userId);
+    return attempts.map((a) => ({
+      id: a.Id,
+      score: a.Score,
+      xpEarned: a.XpEarned,
+      completedAt: a.CompletedAt,
+      caseTitle: a.Case.Title,
+    }));
+  }
+
+  private toDetailDto(a: any): AttemptDetailDto {
+    return {
+      id: a.Id,
+      score: a.Score,
+      xpEarned: a.XpEarned,
+      startedAt: a.StartedAt,
+      completedAt: a.CompletedAt,
+      userId: a.UserId,
+      caseId: a.CaseId,
+      chosenDiagnosisId: a.ChosenDiagnosisId,
+      case: {
+        id: a.Case.Id,
+        title: a.Case.Title,
+        difficulty: a.Case.Difficulty,
+      },
+      diagnosis: {
+        id: a.Diagnosis.Id,
+        name: a.Diagnosis.Name,
+      },
+      tests: a.AttemptTests.map((at: any) => ({
+        testId: at.TestId,
+        testName: at.CaseTest.Test.Name,
+        isCorrect: at.CaseTest.IsCorrect,
+      })),
+      treatments: a.AttemptTreatments.map((at: any) => ({
+        treatmentId: at.TreatmentId,
+        treatmentName: at.CaseTreatment.Treatment.Name,
+        isCorrect: at.CaseTreatment.IsCorrect,
+      })),
+    };
   }
 
   private buildResponse(

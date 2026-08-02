@@ -5,6 +5,8 @@ export class UserResponseDto {
 
   email!: string;
 
+  role!: string;
+
   xpTotal!: number;
 
   currentStreak!: number;

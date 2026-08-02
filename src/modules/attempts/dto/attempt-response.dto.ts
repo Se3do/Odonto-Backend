@@ -22,3 +22,26 @@ export class AttemptResponseDto {
   caseTitle!: string;
   caseDifficulty!: string;
 }
+
+export class AttemptDetailDto {
+  id!: string;
+  score!: number;
+  xpEarned!: number;
+  startedAt!: Date;
+  completedAt!: Date | null;
+  userId!: string;
+  caseId!: string;
+  chosenDiagnosisId!: string;
+  case!: { id: string; title: string; difficulty: string };
+  diagnosis!: { id: string; name: string };
+  tests!: { testId: string; testName: string; isCorrect: boolean }[];
+  treatments!: { treatmentId: string; treatmentName: string; isCorrect: boolean }[];
+}
+
+export class AttemptListItemDto {
+  id!: string;
+  score!: number;
+  xpEarned!: number;
+  completedAt!: Date | null;
+  caseTitle!: string;
+}
