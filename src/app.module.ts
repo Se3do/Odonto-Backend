@@ -8,6 +8,7 @@ import { DiagnosesModule } from './modules/diagnoses/diagnoses.module';
 import { DiagnosticTestsModule } from './modules/diagnostic-tests/diagnostic-tests.module';
 import { TreatmentsModule } from './modules/treatments/treatments.module';
 import { AttemptsModule } from './modules/attempts/attempts.module';
+import { CasesModule } from './modules/cases/cases.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AttemptsModule } from './modules/attempts/attempts.module';
     DiagnosticTestsModule,
     TreatmentsModule,
     AttemptsModule,
+    CasesModule,
   ],
   controllers: [],
   providers: [],
