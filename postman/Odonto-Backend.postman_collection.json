@@ -1,0 +1,1245 @@
+{
+  "info": {
+    "_postman_id": "846b3bc1-4700-47f5-994a-9c3dc068f5b6",
+    "name": "Odonto-Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39024749"
+  },
+  "item": [
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "if (json.accessToken) {",
+                      "    pm.environment.set('accessToken', json.accessToken);",
+                      "    pm.environment.set('adminToken', json.accessToken);",
+                      "}",
+                      "if (json.refreshToken) {",
+                      "    pm.environment.set('refreshToken', json.refreshToken);",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"admin@odonto.test\",\r\n    \"password\": \"AdminAdmin\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/admin/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "admin",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Diagnoses",
+          "item": [
+            {
+              "name": "Create",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \r\n    \"name\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/diagnoses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnoses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \r\n    \"name\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/diagnoses/371b4b73-8a44-4f8c-8624-268e12ed0cb2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnoses",
+                    "371b4b73-8a44-4f8c-8624-268e12ed0cb2"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/diagnoses/371b4b73-8a44-4f8c-8624-268e12ed0cb2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnoses",
+                    "371b4b73-8a44-4f8c-8624-268e12ed0cb2"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Specialties",
+          "item": [
+            {
+              "name": "Create",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \r\n    \"name\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/specialties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "specialties"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \r\n    \"name\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/specialties/1d07bfdf-580d-4766-9141-e52301a68107",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "specialties",
+                    "1d07bfdf-580d-4766-9141-e52301a68107"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/specialties/1d07bfdf-580d-4766-9141-e52301a68107",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "specialties",
+                    "1d07bfdf-580d-4766-9141-e52301a68107"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Treatments",
+          "item": [
+            {
+              "name": "Create",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \r\n    \"name\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/treatments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "treatments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \r\n    \"name\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/treatments/35f95096-e36d-46e6-b3fe-8f362deba8f4",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "treatments",
+                    "35f95096-e36d-46e6-b3fe-8f362deba8f4"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/treatments/35f95096-e36d-46e6-b3fe-8f362deba8f4",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "treatments",
+                    "35f95096-e36d-46e6-b3fe-8f362deba8f4"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Diagnostic-tests",
+          "item": [
+            {
+              "name": "Create",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \r\n    \"name\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/diagnostic-tests",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnostic-tests"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \r\n    \"name\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/diagnostic-tests/44444444-4444-4444-4444-444444444441",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnostic-tests",
+                    "44444444-4444-4444-4444-444444444441"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/diagnostic-tests/44444444-4444-4444-4444-444444444441",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnostic-tests",
+                    "44444444-4444-4444-4444-444444444441"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Cases",
+          "item": [
+            {
+              "name": "Create Case",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "if (json && json.id) pm.collectionVariables.set('caseId', json.id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Persistent Tooth Pain\",\n  \"patientHistory\": \"Patient reports spontaneous pain, worse at night, with lingering cold sensitivity.\",\n  \"diagnosisExplanation\": \"Symptoms and thermal response are most consistent with irreversible pulpitis.\",\n  \"difficulty\": \"MEDIUM\",\n  \"diagnosisId\": \"33333333-3333-3333-3333-333333333331\",\n  \"specialtyId\": \"22222222-2222-2222-2222-222222222221\",\n  \"tests\": [\n    { \"id\": \"44444444-4444-4444-4444-444444444441\", \"isCorrect\": true },\n    { \"id\": \"44444444-4444-4444-4444-444444444442\", \"isCorrect\": false }\n  ],\n  \"treatments\": [\n    { \"id\": \"55555555-5555-5555-5555-555555555551\", \"isCorrect\": true },\n    { \"id\": \"55555555-5555-5555-5555-555555555553\", \"isCorrect\": false }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/cases",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cases"
+                  ]
+                },
+                "description": "Admin only. Creating a case succeeds; capture the returned id into caseId."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Case",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Persistent Tooth Pain (Updated)\",\n  \"difficulty\": \"HARD\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/cases/{{caseId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cases",
+                    "{{caseId}}"
+                  ]
+                },
+                "description": "Admin only. Any field optional; providing tests/treatments replaces those associations."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Case",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/cases/{{caseId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cases",
+                    "{{caseId}}"
+                  ]
+                },
+                "description": "Admin only. Fails with 403 if students have attempts on this case."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Diagnoses",
+          "item": [
+            {
+              "name": "GetAll",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/diagnoses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnoses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GetById",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/diagnoses/371b4b73-8a44-4f8c-8624-268e12ed0cb2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnoses",
+                    "371b4b73-8a44-4f8c-8624-268e12ed0cb2"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Specialties",
+          "item": [
+            {
+              "name": "GetAll",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/specialties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "specialties"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GetById",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/specialties/22222222-2222-2222-2222-222222222221",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "specialties",
+                    "22222222-2222-2222-2222-222222222221"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Treatments",
+          "item": [
+            {
+              "name": "GetAll",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/treatments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "treatments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GetById",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/treatments/55555555-5555-5555-5555-555555555551",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "treatments",
+                    "55555555-5555-5555-5555-555555555551"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Diagnostic-tests",
+          "item": [
+            {
+              "name": "List Diagnostic-tests",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/diagnostic-tests",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnostic-tests"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Diagnostic-test By Id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/diagnostic-tests/44444444-4444-4444-4444-444444444441",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "diagnostic-tests",
+                    "44444444-4444-4444-4444-444444444441"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const res = pm.response.json();",
+                      "",
+                      "pm.test('Status code is 201', () => {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('Response has user object', () => {",
+                      "    pm.expect(res).to.have.property('user');",
+                      "    pm.expect(res.user).to.have.property('id');",
+                      "    pm.expect(res.user).to.have.property('username');",
+                      "    pm.expect(res.user).to.have.property('email');",
+                      "});",
+                      "",
+                      "pm.test('Response contains accessToken', () => {",
+                      "    pm.expect(res).to.have.property('accessToken');",
+                      "    pm.expect(res.accessToken).to.be.a('string').and.not.empty;",
+                      "});",
+                      "",
+                      "pm.test('Response contains refreshToken', () => {",
+                      "    pm.expect(res).to.have.property('refreshToken');",
+                      "    pm.expect(res.refreshToken).to.be.a('string').and.not.empty;",
+                      "});",
+                      "",
+                      "// Save tokens to environment",
+                      "pm.environment.set('accessToken', res.accessToken);",
+                      "pm.environment.set('refreshToken', res.refreshToken);",
+                      "pm.environment.set('userToken', res.accessToken);",
+                      "pm.environment.set('userId', res.user && res.user.id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "packages": {},
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"nigga@gmail.com\",\r\n    \"password\": \"Nigganiggga\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Register",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const res = pm.response.json();",
+                      "",
+                      "pm.test('Status code is 201', () => {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "pm.test('Response has user object', () => {",
+                      "    pm.expect(res).to.have.property('user');",
+                      "    pm.expect(res.user).to.have.property('id');",
+                      "    pm.expect(res.user).to.have.property('username');",
+                      "    pm.expect(res.user).to.have.property('email');",
+                      "});",
+                      "",
+                      "pm.test('Response contains accessToken', () => {",
+                      "    pm.expect(res).to.have.property('accessToken');",
+                      "    pm.expect(res.accessToken).to.be.a('string').and.not.empty;",
+                      "});",
+                      "",
+                      "pm.test('Response contains refreshToken', () => {",
+                      "    pm.expect(res).to.have.property('refreshToken');",
+                      "    pm.expect(res.refreshToken).to.be.a('string').and.not.empty;",
+                      "});",
+                      "",
+                      "// Save tokens to environment",
+                      "pm.environment.set('accessToken', res.accessToken);",
+                      "pm.environment.set('refreshToken', res.refreshToken);",
+                      "pm.environment.set('userToken', res.accessToken);",
+                      "pm.environment.set('userId', res.user && res.user.id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"username\": \"Se3do\",\r\n    \"email\": \"nigga@gmail.com\",\r\n    \"password\": \"Nigganiggga\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Refresh",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/refresh",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "refresh"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Me",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Cases",
+          "item": [
+            {
+              "name": "List Cases",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/cases?search=&difficulty=&specialtyId=&page=1&limit=20&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cases"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": ""
+                    },
+                    {
+                      "key": "difficulty",
+                      "value": ""
+                    },
+                    {
+                      "key": "specialtyId",
+                      "value": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                },
+                "description": "Paginated list. difficulty: EASY|MEDIUM|HARD, sortBy: createdAt|title."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Case By Id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/cases/{{caseId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cases",
+                    "{{caseId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Attempts",
+          "item": [
+            {
+              "name": "Submit Attempt",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "if (json && json.id) pm.collectionVariables.set('attemptId', json.id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"diagnosisId\": \"33333333-3333-3333-3333-333333333331\",\n  \"testIds\": [\"44444444-4444-4444-4444-444444444441\"],\n  \"treatmentIds\": [\"55555555-5555-5555-5555-555555555551\"]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/attempts",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "attempts"
+                  ]
+                },
+                "description": "Requires a DailyCase row dated TODAY. The seeded daily cases are past-dated; insert one with CURRENT_DATE first, otherwise you get 404 'No daily case available for today'."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Attempt By Id",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/attempts/{{attemptId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "attempts",
+                    "{{attemptId}}"
+                  ]
+                },
+                "description": "Full attempt detail with correct/incorrect/missed breakdown."
+              },
+              "response": []
+            },
+            {
+              "name": "Get User Attempts",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/attempts/user/{{userId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "attempts",
+                    "user",
+                    "{{userId}}"
+                  ]
+                },
+                "description": "Attempt history for a user (userId is captured by the User Login request)."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "userToken",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "attemptId",
+      "value": ""
+    }
+  ]
+}
