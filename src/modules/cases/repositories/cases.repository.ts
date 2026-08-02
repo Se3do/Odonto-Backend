@@ -157,4 +157,8 @@ export class CasesRepository {
   hasAttempts(caseId: string) {
     return this.prismaService.userAttempt.findFirst({ where: { CaseId: caseId } });
   }
+
+  hasDailyCaseAssignment(caseId: string) {
+    return this.prismaService.dailyCase.findFirst({ where: { CaseId: caseId } });
+  }
 }

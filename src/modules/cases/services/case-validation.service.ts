@@ -51,6 +51,11 @@ export class CaseValidationService {
     if (existing) {
       throw new ForbiddenException('Cannot delete a case that has student attempts');
     }
+
+    const dailyAssignment = await this.repository.hasDailyCaseAssignment(caseId);
+    if (dailyAssignment) {
+      throw new ForbiddenException('Cannot delete a case that is assigned to a daily case');
+    }
   }
 
   private async validateReferencedEntities(
