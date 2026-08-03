@@ -32,6 +32,10 @@ export class AttemptDetailDto {
   userId!: string;
   caseId!: string;
   chosenDiagnosisId!: string;
+  correctDiagnosis!: boolean;
+  correctDiagnosisId!: string;
+  correctDiagnosisName!: string;
+  diagnosisExplanation!: string;
   case!: { id: string; title: string; difficulty: string };
   diagnosis!: { id: string; name: string };
   tests!: { testId: string; testName: string; isCorrect: boolean }[];

@@ -138,6 +138,10 @@ export class AttemptService {
       userId: a.UserId,
       caseId: a.CaseId,
       chosenDiagnosisId: a.ChosenDiagnosisId,
+      correctDiagnosis: a.Case.Diagnosis.Id === a.ChosenDiagnosisId,
+      correctDiagnosisId: a.Case.Diagnosis.Id,
+      correctDiagnosisName: a.Case.Diagnosis.Name,
+      diagnosisExplanation: a.Case.DiagnosisExplanation,
       case: {
         id: a.Case.Id,
         title: a.Case.Title,

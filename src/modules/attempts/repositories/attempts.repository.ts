@@ -58,7 +58,15 @@ export class AttemptsRepository {
     return this.prismaService.userAttempt.findUnique({
       where: { Id: id },
       include: {
-        Case: { select: { Id: true, Title: true, Difficulty: true } },
+        Case: {
+          select: {
+            Id: true,
+            Title: true,
+            Difficulty: true,
+            DiagnosisExplanation: true,
+            Diagnosis: { select: { Id: true, Name: true } },
+          },
+        },
         Diagnosis: { select: { Id: true, Name: true } },
         AttemptTests: {
           include: { CaseTest: { include: { Test: true } } },
