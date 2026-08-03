@@ -639,6 +639,139 @@
               "response": []
             }
           ]
+        },
+        {
+          "name": "Daily Cases",
+          "item": [
+            {
+              "name": "Create Daily Case",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "if (json && json.date) pm.collectionVariables.set('dailyCaseDate', json.date.slice(0, 10));"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"date\": \"2026-08-20\",\n  \"caseId\": \"{{caseId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/daily-case",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "daily-case"
+                  ]
+                },
+                "description": "Admin only. Assign a case to a date; captures dailyCaseDate."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Daily Case",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"caseId\": \"{{caseId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/daily-case/{{dailyCaseDate}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "daily-case",
+                    "{{dailyCaseDate}}"
+                  ]
+                },
+                "description": "Admin only. Change the caseId to reassign the case for that date."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Daily Case",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/daily-case/{{dailyCaseDate}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "daily-case",
+                    "{{dailyCaseDate}}"
+                  ]
+                },
+                "description": "Admin only."
+              },
+              "response": []
+            }
+          ]
         }
       ]
     },
@@ -1072,6 +1205,29 @@
                     "{{caseId}}"
                   ]
                 }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Daily Cases",
+          "item": [
+            {
+              "name": "List Daily Cases",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/daily-case",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "daily-case"
+                  ]
+                },
+                "description": "Public. All scheduled daily cases, newest first, with nested case summary."
               },
               "response": []
             }
