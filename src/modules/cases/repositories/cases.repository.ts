@@ -88,6 +88,7 @@ export class CasesRepository {
         CaseTreatments: {
           include: { Treatment: { select: { Id: true, Name: true } } },
         },
+        CaseImages: { select: { Id: true, Url: true, ImageType: true } },
       },
     });
   }
@@ -127,6 +128,7 @@ export class CasesRepository {
           CaseTreatments: {
             include: { Treatment: { select: { Id: true, Name: true } } },
           },
+          CaseImages: { select: { Id: true, Url: true, ImageType: true } },
         },
       }),
       this.prismaService.case.count({ where }),
@@ -156,6 +158,20 @@ export class CasesRepository {
 
   hasAttempts(caseId: string) {
     return this.prismaService.userAttempt.findFirst({ where: { CaseId: caseId } });
+  }
+
+  createImage(caseId: string, url: string, imageType: string) {
+    return this.prismaService.caseImage.create({
+      data: { CaseId: caseId, Url: url, ImageType: imageType as any },
+    });
+  }
+
+  findImageById(id: string) {
+    return this.prismaService.caseImage.findUnique({ where: { Id: id } });
+  }
+
+  deleteImage(id: string) {
+    return this.prismaService.caseImage.delete({ where: { Id: id } });
   }
 
   hasDailyCaseAssignment(caseId: string) {

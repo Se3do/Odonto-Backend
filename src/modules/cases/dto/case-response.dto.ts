@@ -10,6 +10,12 @@ export class CaseTreatmentResponseDto {
   isCorrect!: boolean;
 }
 
+export class CaseImageResponseDto {
+  id!: string;
+  url!: string;
+  imageType!: string;
+}
+
 export class CaseResponseDto {
   id!: string;
   title!: string;
@@ -22,6 +28,7 @@ export class CaseResponseDto {
   diagnosisName!: string;
   tests!: CaseTestResponseDto[];
   treatments!: CaseTreatmentResponseDto[];
+  images!: CaseImageResponseDto[];
   createdAt!: Date;
 }
 

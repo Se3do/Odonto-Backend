@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CasesRepository } from '../repositories/cases.repository';
 import { CaseValidationService } from './case-validation.service';
 import { CreateCaseDto } from '../dto/create-case.dto';
 import { UpdateCaseDto } from '../dto/update-case.dto';
 import { CaseQueryDto } from '../dto/case-query.dto';
-import { CaseResponseDto, PaginatedCaseResponseDto } from '../dto/case-response.dto';
+import { CaseResponseDto, CaseImageResponseDto, PaginatedCaseResponseDto } from '../dto/case-response.dto';
+import { CASE_IMAGE_TYPES, deleteUploadedFile } from '../cases-upload.config';
 
 @Injectable()
 export class CasesService {
@@ -88,6 +89,34 @@ export class CasesService {
     };
   }
 
+  async uploadImage(
+    caseId: string,
+    file: Express.Multer.File,
+    imageType?: string,
+  ): Promise<CaseImageResponseDto> {
+    await this.getOrThrow(caseId);
+    if (!file) {
+      throw new BadRequestException('No image file provided');
+    }
+    const type = this.validateImageType(imageType);
+    const image = await this.repository.createImage(
+      caseId,
+      `/uploads/cases/${file.filename}`,
+      type,
+    );
+    return this.toImageDto(image);
+  }
+
+  async removeImage(imageId: string): Promise<CaseImageResponseDto> {
+    const image = await this.repository.findImageById(imageId);
+    if (!image) {
+      throw new NotFoundException(`Image with id ${imageId} was not found`);
+    }
+    await deleteUploadedFile(image.Url);
+    await this.repository.deleteImage(imageId);
+    return this.toImageDto(image);
+  }
+
   private async getOrThrow(id: string) {
     const c = await this.repository.findById(id);
     if (!c) {
@@ -117,7 +146,26 @@ export class CasesService {
         treatmentName: ct.Treatment.Name,
         isCorrect: ct.IsCorrect,
       })),
+      images: c.CaseImages.map((ci: any) => this.toImageDto(ci)),
       createdAt: c.CreatedAt,
     };
+  }
+
+  private toImageDto(image: any): CaseImageResponseDto {
+    return {
+      id: image.Id,
+      url: image.Url,
+      imageType: image.ImageType,
+    };
+  }
+
+  private validateImageType(value?: string): string {
+    const type = value ?? 'ClinicalPhoto';
+    if (!CASE_IMAGE_TYPES.includes(type as (typeof CASE_IMAGE_TYPES)[number])) {
+      throw new BadRequestException(
+        `Invalid image type, expected one of: ${CASE_IMAGE_TYPES.join(', ')}`,
+      );
+    }
+    return type;
   }
 }
