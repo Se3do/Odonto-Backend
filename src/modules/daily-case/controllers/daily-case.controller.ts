@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nes
 import { DailyCaseService } from '../services/daily-case.service';
 import { CreateDailyCaseDto } from '../dto/create-daily-case.dto';
 import { UpdateDailyCaseDto } from '../dto/update-daily-case.dto';
-import { DailyCaseResponseDto } from '../dto/daily-case-response.dto';
+import { DailyCaseResponseDto, TodayDailyCaseResponseDto } from '../dto/daily-case-response.dto';
 import { AccessTokenGuard } from '../../auth/guards/access-token.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
@@ -22,6 +22,11 @@ export class DailyCaseController {
   @Get()
   findAll(): Promise<DailyCaseResponseDto[]> {
     return this.dailyCaseService.findAll();
+  }
+
+  @Get('today')
+  getToday(): Promise<TodayDailyCaseResponseDto> {
+    return this.dailyCaseService.getToday();
   }
 
   @Put(':date')

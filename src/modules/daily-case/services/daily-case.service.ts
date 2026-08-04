@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { DailyCaseRepository } from '../repositories/daily-case.repository';
 import { CreateDailyCaseDto } from '../dto/create-daily-case.dto';
 import { UpdateDailyCaseDto } from '../dto/update-daily-case.dto';
-import { DailyCaseResponseDto } from '../dto/daily-case-response.dto';
+import { DailyCaseResponseDto, TodayDailyCaseResponseDto } from '../dto/daily-case-response.dto';
 
 @Injectable()
 export class DailyCaseService {
@@ -22,6 +22,33 @@ export class DailyCaseService {
   async findAll(): Promise<DailyCaseResponseDto[]> {
     const list = await this.repository.findAll();
     return list.map((d) => this.toResponseDto(d));
+  }
+
+  async getToday(): Promise<TodayDailyCaseResponseDto> {
+    const dailyCase = await this.repository.findToday(new Date());
+    if (!dailyCase) {
+      throw new NotFoundException('No daily case assigned for today');
+    }
+    return {
+      id: dailyCase.Id,
+      date: dailyCase.Date.toISOString(),
+      case: {
+        id: dailyCase.Case.Id,
+        title: dailyCase.Case.Title,
+        difficulty: dailyCase.Case.Difficulty,
+        patientHistory: dailyCase.Case.PatientHistory,
+        specialtyId: dailyCase.Case.Specialty.Id,
+        specialtyName: dailyCase.Case.Specialty.Name,
+        tests: dailyCase.Case.CaseTests.map((ct) => ({
+          testId: ct.Test.Id,
+          testName: ct.Test.Name,
+        })),
+        treatments: dailyCase.Case.CaseTreatments.map((ct) => ({
+          treatmentId: ct.Treatment.Id,
+          treatmentName: ct.Treatment.Name,
+        })),
+      },
+    };
   }
 
   async update(dateParam: string, dto: UpdateDailyCaseDto): Promise<DailyCaseResponseDto> {

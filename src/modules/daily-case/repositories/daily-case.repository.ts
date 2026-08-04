@@ -21,6 +21,30 @@ export class DailyCaseRepository {
     });
   }
 
+  findToday(date: Date) {
+    const { start, end } = this.dayRange(date);
+    return this.prismaService.dailyCase.findFirst({
+      where: { Date: { gte: start, lte: end } },
+      include: {
+        Case: {
+          select: {
+            Id: true,
+            Title: true,
+            Difficulty: true,
+            PatientHistory: true,
+            Specialty: { select: { Id: true, Name: true } },
+            CaseTests: {
+              select: { Test: { select: { Id: true, Name: true } } },
+            },
+            CaseTreatments: {
+              select: { Treatment: { select: { Id: true, Name: true } } },
+            },
+          },
+        },
+      },
+    });
+  }
+
   findAll() {
     return this.prismaService.dailyCase.findMany({
       orderBy: { Date: 'desc' },
