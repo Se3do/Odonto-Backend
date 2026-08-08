@@ -47,6 +47,11 @@ export class DailyCaseService {
           treatmentId: ct.Treatment.Id,
           treatmentName: ct.Treatment.Name,
         })),
+        images: dailyCase.Case.CaseImages.map((ci) => ({
+          id: ci.Id,
+          url: ci.Url,
+          imageType: ci.ImageType,
+        })),
       },
     };
   }

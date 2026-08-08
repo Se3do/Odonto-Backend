@@ -26,4 +26,5 @@ export class TodayCaseSummaryDto {
   specialtyName!: string;
   tests!: { testId: string; testName: string }[];
   treatments!: { treatmentId: string; treatmentName: string }[];
+  images!: { id: string; url: string; imageType: string }[];
 }

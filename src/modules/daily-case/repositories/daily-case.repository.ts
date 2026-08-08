@@ -39,6 +39,7 @@ export class DailyCaseRepository {
             CaseTreatments: {
               select: { Treatment: { select: { Id: true, Name: true } } },
             },
+            CaseImages: { select: { Id: true, Url: true, ImageType: true } },
           },
         },
       },
