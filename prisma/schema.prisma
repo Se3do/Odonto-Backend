@@ -92,6 +92,8 @@ model Case {
   CaseTreatments CaseTreatment[]
   CaseImages     CaseImage[]
   DailyCases     DailyCase[]
+
+  @@index([SpecialtyId])
 }
 
 model CaseTest {
@@ -128,6 +130,7 @@ model CaseImage {
   CaseId String
   Case   Case   @relation(fields: [CaseId], references: [Id])
 
+  @@index([CaseId])
   @@map("CaseImages")
 }
 
@@ -137,6 +140,8 @@ model DailyCase {
 
   CaseId String
   Case   Case   @relation(fields: [CaseId], references: [Id])
+
+  @@index([CaseId])
 }
 
 model UserAttempt {
@@ -156,6 +161,9 @@ model UserAttempt {
 
   AttemptTests      AttemptTest[]
   AttemptTreatments AttemptTreatment[]
+
+  @@index([UserId, CaseId])
+  @@index([CaseId])
 }
 
 model AttemptTest {
