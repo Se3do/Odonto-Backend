@@ -637,6 +637,96 @@
                 "description": "Admin only. Fails with 403 if students have attempts on this case."
               },
               "response": []
+            },
+            {
+              "name": "Upload Case Image",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "if (json && id) pm.collectionVariables.set('id', json.id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": [],
+                      "description": "Image file (png/jpg/jpeg, max 5MB)"
+                    },
+                    {
+                      "key": "imageType",
+                      "type": "text",
+                      "value": "XRay"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/cases/{{caseId}}/images",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cases",
+                    "{{caseId}}",
+                    "images"
+                  ]
+                },
+                "description": "Admin only. Multipart: image file + imageType (XRay|CT|MRI|ClinicalPhoto|Diagram). Captures imageId."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Case Image",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/cases/images/{{imageId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "cases",
+                    "images",
+                    "{{imageId}}"
+                  ]
+                },
+                "description": "Admin only. Removes the image row and deletes the file from disk."
+              },
+              "response": []
             }
           ]
         },
@@ -1230,6 +1320,25 @@
                 "description": "Public. All scheduled daily cases, newest first, with nested case summary."
               },
               "response": []
+            },
+            {
+              "name": "Get Today's Case",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/daily-case/today",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "daily-case",
+                    "today"
+                  ]
+                },
+                "description": "Public. Answer-free view of today's daily case (no diagnosis/explanation/isCorrect)."
+              },
+              "response": []
             }
           ]
         },
@@ -1352,6 +1461,99 @@
               "response": []
             }
           ]
+        },
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "Get My Profile",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "profile"
+                  ]
+                },
+                "description": "Authenticated. Current user profile."
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Stats",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/stats",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "stats"
+                  ]
+                },
+                "description": "Authenticated. Dashboard stats: attempts, scores, xp, streaks."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Leaderboard",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/leaderboard?limit=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "leaderboard?limit=10"
+                  ]
+                },
+                "description": "Authenticated. Top users by XP; optional ?limit (max 50)."
+              },
+              "response": []
+            }
+          ],
+          "description": "Authenticated student endpoints."
         }
       ]
     }
@@ -1395,6 +1597,10 @@
     },
     {
       "key": "attemptId",
+      "value": ""
+    },
+    {
+      "key": "imageId",
       "value": ""
     }
   ]
