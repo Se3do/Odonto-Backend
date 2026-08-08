@@ -139,6 +139,15 @@ export class UserRepository {
     });
   }
 
+  getAttemptStats(userId: string) {
+    return this.prismaService.userAttempt.aggregate({
+      where: { UserId: userId },
+      _count: { Id: true },
+      _avg: { Score: true },
+      _max: { Score: true },
+    });
+  }
+
   async exists(criteria: UserExistsCriteria): Promise<boolean> {
     const filters: Prisma.UserWhereInput[] = [];
 

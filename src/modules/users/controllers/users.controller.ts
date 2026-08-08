@@ -6,8 +6,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
-import { LeaderboardEntryDto } from '../dto/user-response.dto';
+import { UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
 import { AccessTokenGuard } from '../../auth/guards/access-token.guard';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import type { AccessTokenPayload } from '../../auth/services/token.service';
 
 const MAX_LEADERBOARD_LIMIT = 50;
 const DEFAULT_LEADERBOARD_LIMIT = 10;
@@ -16,6 +18,16 @@ const DEFAULT_LEADERBOARD_LIMIT = 10;
 @UseGuards(AccessTokenGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('profile')
+  getProfile(@CurrentUser() user: AccessTokenPayload): Promise<UserResponseDto> {
+    return this.usersService.getProfile(user.sub);
+  }
+
+  @Get('stats')
+  getStats(@CurrentUser() user: AccessTokenPayload): Promise<UserStatsDto> {
+    return this.usersService.getStats(user.sub);
+  }
 
   @Get('leaderboard')
   getLeaderboard(

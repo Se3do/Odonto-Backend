@@ -7,7 +7,7 @@ import {
 import { User } from '@prisma/client';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { UserResponseDto, LeaderboardEntryDto } from '../dto/user-response.dto';
+import { UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
 import {
   CreateUserData,
   UpdateUserData,
@@ -45,6 +45,10 @@ export class UsersService {
   async findById(id: string): Promise<UserResponseDto> {
     const user = await this.getUserOrThrow(id);
     return this.toResponseDto(user);
+  }
+
+  async getProfile(userId: string): Promise<UserResponseDto> {
+    return this.findById(userId);
   }
 
   async findByEmail(email: string): Promise<UserResponseDto | null> {
@@ -138,6 +142,20 @@ export class UsersService {
       currentStreak: u.CurrentStreak,
       longestStreak: u.LongestStreak,
     }));
+  }
+
+  async getStats(userId: string): Promise<UserStatsDto> {
+    const user = await this.getUserOrThrow(userId);
+    const agg = await this.userRepository.getAttemptStats(userId);
+    return {
+      totalAttempts: agg._count.Id,
+      averageScore: agg._avg.Score,
+      bestScore: agg._max.Score,
+      totalXp: user.XpTotal,
+      currentStreak: user.CurrentStreak,
+      longestStreak: user.LongestStreak,
+      lastCompletedDate: user.LastCompletedDate,
+    };
   }
 
   private async getUserOrThrow(id: string): Promise<User> {
