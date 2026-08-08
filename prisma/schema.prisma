@@ -42,6 +42,8 @@ model User {
   LastCompletedDate DateTime?
 
   UserAttempt UserAttempt[]
+
+  @@index([Role, XpTotal(sort: Desc), LongestStreak(sort: Desc)])
 }
 
 model Specialty {
