@@ -124,6 +124,21 @@ export class UserRepository {
     });
   }
 
+  getLeaderboard(limit: number) {
+    return this.prismaService.user.findMany({
+      where: { Role: 'USER' },
+      orderBy: [{ XpTotal: 'desc' }, { LongestStreak: 'desc' }],
+      take: limit,
+      select: {
+        Id: true,
+        UserName: true,
+        XpTotal: true,
+        CurrentStreak: true,
+        LongestStreak: true,
+      },
+    });
+  }
+
   async exists(criteria: UserExistsCriteria): Promise<boolean> {
     const filters: Prisma.UserWhereInput[] = [];
 

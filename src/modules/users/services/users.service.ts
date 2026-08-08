@@ -7,7 +7,7 @@ import {
 import { User } from '@prisma/client';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { UserResponseDto } from '../dto/user-response.dto';
+import { UserResponseDto, LeaderboardEntryDto } from '../dto/user-response.dto';
 import {
   CreateUserData,
   UpdateUserData,
@@ -126,6 +126,18 @@ export class UsersService {
   async clearRefreshToken(userId: string): Promise<void> {
     await this.getUserOrThrow(userId);
     await this.userRepository.clearRefreshToken(userId);
+  }
+
+  async getLeaderboard(limit: number): Promise<LeaderboardEntryDto[]> {
+    const users = await this.userRepository.getLeaderboard(limit);
+    return users.map((u, i) => ({
+      rank: i + 1,
+      id: u.Id,
+      username: u.UserName,
+      xpTotal: u.XpTotal,
+      currentStreak: u.CurrentStreak,
+      longestStreak: u.LongestStreak,
+    }));
   }
 
   private async getUserOrThrow(id: string): Promise<User> {
