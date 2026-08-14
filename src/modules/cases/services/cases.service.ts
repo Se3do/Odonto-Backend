@@ -5,7 +5,8 @@ import { CreateCaseDto } from '../dto/create-case.dto';
 import { UpdateCaseDto } from '../dto/update-case.dto';
 import { CaseQueryDto } from '../dto/case-query.dto';
 import { CaseResponseDto, CaseImageResponseDto, PaginatedCaseResponseDto } from '../dto/case-response.dto';
-import { CASE_IMAGE_TYPES, deleteUploadedFile } from '../cases-upload.config';
+import { CASE_IMAGE_TYPES } from '../cases-upload.config';
+import { v2 as cloudinary } from 'cloudinary';
 
 @Injectable()
 export class CasesService {
@@ -99,9 +100,16 @@ export class CasesService {
       throw new BadRequestException('No image file provided');
     }
     const type = this.validateImageType(imageType);
+    const uploaded = await new Promise<{ secure_url: string }>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'odonto/cases' },
+        (error, result) => (error ? reject(error) : resolve(result as { secure_url: string })),
+      );
+      stream.end(file.buffer);
+    });
     const image = await this.repository.createImage(
       caseId,
-      `/uploads/cases/${file.filename}`,
+      uploaded.secure_url,
       type,
     );
     return this.toImageDto(image);
@@ -112,9 +120,17 @@ export class CasesService {
     if (!image) {
       throw new NotFoundException(`Image with id ${imageId} was not found`);
     }
-    await deleteUploadedFile(image.Url);
+    const publicId = this.parseCloudinaryPublicId(image.Url);
+    if (publicId) {
+      await cloudinary.uploader.destroy(publicId);
+    }
     await this.repository.deleteImage(imageId);
     return this.toImageDto(image);
+  }
+
+  private parseCloudinaryPublicId(url: string): string | null {
+    const match = /\/image\/upload\/v\d+\/(.+)\.\w+$/.exec(url);
+    return match ? match[1] : null;
   }
 
   private async getOrThrow(id: string) {
