@@ -8,6 +8,17 @@ import { CaseResponseDto, CaseImageResponseDto, PaginatedCaseResponseDto } from 
 import { CASE_IMAGE_TYPES } from '../cases-upload.config';
 import { v2 as cloudinary } from 'cloudinary';
 
+let cloudinaryConfigured = false;
+function ensureCloudinaryConfig() {
+  if (cloudinaryConfigured) return;
+  const url = process.env.CLOUDINARY_URL ?? '';
+  const m = url.match(/^cloudinary:\/\/([^:]+):([^@]+)@(.+)$/);
+  if (m) {
+    cloudinary.config({ cloud_name: m[3], api_key: m[1], api_secret: m[2] });
+  }
+  cloudinaryConfigured = true;
+}
+
 @Injectable()
 export class CasesService {
   constructor(
@@ -100,6 +111,7 @@ export class CasesService {
       throw new BadRequestException('No image file provided');
     }
     const type = this.validateImageType(imageType);
+    ensureCloudinaryConfig();
     const uploaded = await new Promise<{ secure_url: string }>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         { folder: 'odonto/cases' },
@@ -122,6 +134,7 @@ export class CasesService {
     }
     const publicId = this.parseCloudinaryPublicId(image.Url);
     if (publicId) {
+      ensureCloudinaryConfig();
       await cloudinary.uploader.destroy(publicId);
     }
     await this.repository.deleteImage(imageId);
