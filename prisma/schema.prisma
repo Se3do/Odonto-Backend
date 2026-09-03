@@ -25,6 +25,13 @@ enum ImageType {
   Diagram
 }
 
+enum CasePhase {
+  TESTING
+  DIAGNOSING
+  TREATING
+  COMPLETED
+}
+
 model User {
   Id                String    @id @default(uuid())
   UserName          String    @unique
@@ -99,9 +106,11 @@ model Case {
 }
 
 model CaseTest {
-  CaseId    String
-  TestId    String
-  IsCorrect Boolean
+  CaseId     String
+  TestId     String
+  IsCorrect  Boolean
+  TestResult String @default("")
+  TestCost   Int    @default(1)
 
   Case         Case          @relation(fields: [CaseId], references: [Id])
   Test         Test          @relation(fields: [TestId], references: [Id])
@@ -147,19 +156,22 @@ model DailyCase {
 }
 
 model UserAttempt {
-  Id          String    @id @default(uuid())
-  Score       Float
-  XpEarned    Int
+  Id          String     @id @default(uuid())
+  Score       Float?
+  XpEarned    Int?
   StartedAt   DateTime
   CompletedAt DateTime?
+  Phase       CasePhase  @default(TESTING)
+  Budget      Int        @default(5)
+  TestsUsed   Int        @default(0)
 
   UserId            String
   CaseId            String
-  ChosenDiagnosisId String
+  ChosenDiagnosisId String?
 
   User      User      @relation(fields: [UserId], references: [Id])
   Case      Case      @relation(fields: [CaseId], references: [Id])
-  Diagnosis Diagnosis @relation(fields: [ChosenDiagnosisId], references: [Id])
+  Diagnosis Diagnosis? @relation(fields: [ChosenDiagnosisId], references: [Id])
 
   AttemptTests      AttemptTest[]
   AttemptTreatments AttemptTreatment[]
