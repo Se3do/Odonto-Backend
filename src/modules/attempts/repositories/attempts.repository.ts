@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { CasePhase, Prisma } from '@prisma/client';
 import { PrismaService } from '../../../common/database/prisma.service';
 
 @Injectable()
@@ -78,6 +78,44 @@ export class AttemptsRepository {
     });
   }
 
+  findAttemptByIdWithCase(id: string) {
+    return this.prismaService.userAttempt.findUnique({
+      where: { Id: id },
+      include: {
+        User: {
+          select: { LastCompletedDate: true, CurrentStreak: true, LongestStreak: true },
+        },
+        Case: {
+          include: {
+            CaseImages: true,
+            CaseTests: { include: { Test: true } },
+            CaseTreatments: { include: { Treatment: true } },
+            Diagnosis: { select: { Id: true, Name: true } },
+          },
+        },
+        AttemptTests: {
+          include: { CaseTest: { include: { Test: true } } },
+        },
+        AttemptTreatments: {
+          include: { CaseTreatment: { include: { Treatment: true } } },
+        },
+      },
+    });
+  }
+
+  findCaseTestByCaseAndTest(caseId: string, testId: string) {
+    return this.prismaService.caseTest.findUnique({
+      where: { CaseId_TestId: { CaseId: caseId, TestId: testId } },
+      include: { Test: true },
+    });
+  }
+
+  findAttemptTest(attemptId: string, caseId: string, testId: string) {
+    return this.prismaService.attemptTest.findUnique({
+      where: { AttemptId_CaseId_TestId: { AttemptId: attemptId, CaseId: caseId, TestId: testId } },
+    });
+  }
+
   findAttemptsByUserId(userId: string) {
     return this.prismaService.userAttempt.findMany({
       where: { UserId: userId },
@@ -87,6 +125,7 @@ export class AttemptsRepository {
         Score: true,
         XpEarned: true,
         CompletedAt: true,
+        Phase: true,
         Case: { select: { Title: true } },
       },
     });
