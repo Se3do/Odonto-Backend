@@ -1346,7 +1346,231 @@
           "name": "Attempts",
           "item": [
             {
-              "name": "Submit Attempt",
+              "name": "Start Attempt",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "if (json && json.attemptId) {",
+                      "    pm.collectionVariables.set('attemptId', json.attemptId);",
+                      "    pm.collectionVariables.set('testIds', JSON.stringify(json.availableTests.map(t => t.testId)));",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/attempts/start",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "attempts",
+                    "start"
+                  ]
+                },
+                "description": "Phase 1: Start a new attempt for today's case. Returns case info, budget (5), available tests, and phase=TESTING. Captures attemptId and testIds."
+              },
+              "response": []
+            },
+            {
+              "name": "Order Test",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "pm.test('Phase is TESTING', () => { pm.expect(json.phase).to.eql('TESTING'); });",
+                      "pm.test('Has result text', () => { pm.expect(json.result).to.be.a('string').and.not.empty; });"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"testId\": \"44444444-4444-4444-4444-444444444441\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/attempts/{{attemptId}}/order-test",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "attempts",
+                    "{{attemptId}}",
+                    "order-test"
+                  ]
+                },
+                "description": "Phase 2: Order a diagnostic test. Returns the test result text, decrements budget. Costs 1 budget point. Cannot order the same test twice."
+              },
+              "response": []
+            },
+            {
+              "name": "Submit Diagnosis",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "pm.test('Phase transitions to TREATING', () => { pm.expect(json.phase).to.eql('TREATING'); });",
+                      "pm.test('Returns diagnosisCorrect boolean', () => { pm.expect(json).to.have.property('diagnosisCorrect'); });"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"diagnosisId\": \"33333333-3333-3333-3333-333333333331\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/attempts/{{attemptId}}/diagnose",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "attempts",
+                    "{{attemptId}}",
+                    "diagnose"
+                  ]
+                },
+                "description": "Phase 3: Submit your diagnosis. Transitions phase from TESTING to TREATING. Returns whether your diagnosis was correct and the correct answer."
+              },
+              "response": []
+            },
+            {
+              "name": "Submit Treatments",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "pm.test('Phase is COMPLETED', () => { pm.expect(json.phase).to.eql('COMPLETED'); });",
+                      "pm.test('Has score', () => { pm.expect(json).to.have.property('score'); });",
+                      "pm.test('Has xpEarned', () => { pm.expect(json).to.have.property('xpEarned'); });"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{userToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"treatmentIds\": [\n    \"55555555-5555-5555-5555-555555555551\",\n    \"55555555-5555-5555-5555-555555555555\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/attempts/{{attemptId}}/treat",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "attempts",
+                    "{{attemptId}}",
+                    "treat"
+                  ]
+                },
+                "description": "Phase 4: Submit treatment selections. Scores the attempt (0-100), awards XP, completes it. Returns correct/incorrect/missed breakdown for tests and treatments."
+              },
+              "response": []
+            },
+            {
+              "name": "Submit Attempt (Legacy)",
               "event": [
                 {
                   "listen": "test",
@@ -1397,7 +1621,7 @@
                     "attempts"
                   ]
                 },
-                "description": "Requires a DailyCase row dated TODAY. The seeded daily cases are past-dated; insert one with CURRENT_DATE first, otherwise you get 404 'No daily case available for today'."
+                "description": "DEPRECATED. Single-shot submission. Use Start Attempt -> Order Test -> Diagnose -> Treat instead."
               },
               "response": []
             },
@@ -1426,7 +1650,7 @@
                     "{{attemptId}}"
                   ]
                 },
-                "description": "Full attempt detail with correct/incorrect/missed breakdown."
+                "description": "Full attempt detail: phase, budget, testsUsed, orderedTests (with result text), score, correct/incorrect breakdown."
               },
               "response": []
             },
@@ -1601,6 +1825,14 @@
     },
     {
       "key": "imageId",
+      "value": ""
+    },
+    {
+      "key": "dailyCaseDate",
+      "value": ""
+    },
+    {
+      "key": "testIds",
       "value": ""
     }
   ]
