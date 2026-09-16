@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, ForbiddenException, Param, Post, UseGuards } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
 import { AttemptService } from '../services/attempt.service';
 import { CreateAttemptDto } from '../dto/create-attempt.dto';
 import { OrderTestDto } from '../dto/order-test.dto';
@@ -60,7 +61,15 @@ export class AttemptsController {
   }
 
   @Get('user/:userId')
-  findByUser(@Param('userId') userId: string): Promise<AttemptListItemDto[]> {
+  findByUser(
+    @Param('userId') userId: string,
+    @CurrentUser() user: AccessTokenPayload,
+  ): Promise<AttemptListItemDto[]> {
+    if (user.sub !== userId && user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException(
+        'You can only view your own attempt history',
+      );
+    }
     return this.attemptService.getAttemptsByUserId(userId);
   }
 
