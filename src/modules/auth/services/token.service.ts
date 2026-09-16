@@ -1,11 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import {
   ACCESS_TOKEN_SUBJECT,
-  DEFAULT_ACCESS_TOKEN_EXPIRES_IN,
-  DEFAULT_ACCESS_TOKEN_SECRET,
-  DEFAULT_REFRESH_TOKEN_EXPIRES_IN,
-  DEFAULT_REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN_SUBJECT,
 } from '../auth.constants';
 
@@ -24,7 +21,30 @@ export interface RefreshTokenPayload {
 
 @Injectable()
 export class TokenService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  private get accessSecret(): string {
+    return this.configService.getOrThrow<string>('JWT_ACCESS_SECRET');
+  }
+
+  private get refreshSecret(): string {
+    return this.configService.getOrThrow<string>('JWT_REFRESH_SECRET');
+  }
+
+  private get accessExpiresIn(): JwtSignOptions['expiresIn'] {
+    return this.configService.getOrThrow<JwtSignOptions['expiresIn']>(
+      'JWT_ACCESS_EXPIRES_IN',
+    );
+  }
+
+  private get refreshExpiresIn(): JwtSignOptions['expiresIn'] {
+    return this.configService.getOrThrow<JwtSignOptions['expiresIn']>(
+      'JWT_REFRESH_EXPIRES_IN',
+    );
+  }
 
   signAccessToken(
     payload: Omit<AccessTokenPayload, 'tokenType'>,
@@ -32,9 +52,8 @@ export class TokenService {
     return this.jwtService.signAsync(
       { ...payload, tokenType: ACCESS_TOKEN_SUBJECT } as AccessTokenPayload,
       {
-        secret: DEFAULT_ACCESS_TOKEN_SECRET,
-        expiresIn:
-          DEFAULT_ACCESS_TOKEN_EXPIRES_IN as JwtSignOptions['expiresIn'],
+        secret: this.accessSecret,
+        expiresIn: this.accessExpiresIn,
       },
     );
   }
@@ -45,9 +64,8 @@ export class TokenService {
     return this.jwtService.signAsync(
       { ...payload, tokenType: REFRESH_TOKEN_SUBJECT } as RefreshTokenPayload,
       {
-        secret: DEFAULT_REFRESH_TOKEN_SECRET,
-        expiresIn:
-          DEFAULT_REFRESH_TOKEN_EXPIRES_IN as JwtSignOptions['expiresIn'],
+        secret: this.refreshSecret,
+        expiresIn: this.refreshExpiresIn,
       },
     );
   }
@@ -56,7 +74,7 @@ export class TokenService {
     const payload = await this.jwtService.verifyAsync<AccessTokenPayload>(
       token,
       {
-        secret: DEFAULT_ACCESS_TOKEN_SECRET,
+        secret: this.accessSecret,
       },
     );
 
@@ -71,7 +89,7 @@ export class TokenService {
     const payload = await this.jwtService.verifyAsync<RefreshTokenPayload>(
       token,
       {
-        secret: DEFAULT_REFRESH_TOKEN_SECRET,
+        secret: this.refreshSecret,
       },
     );
 
