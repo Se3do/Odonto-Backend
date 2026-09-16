@@ -32,6 +32,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
+  app.enableShutdownHooks();
+
   const allowedOrigins = [
     ...DEFAULT_ALLOWED_ORIGINS,
     ...(config.get<string>('CORS_ORIGIN') ?? '')
