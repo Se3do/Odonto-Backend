@@ -1,3 +1,4 @@
+import { CasePhase } from "@prisma/client";
 import type { PrismaClient } from "@prisma/client";
 
 import { caseDefinitions } from "./constants";
@@ -17,6 +18,9 @@ export async function seedAttempts(prisma: PrismaClient) {
       UserId: ids.users.admin,
       CaseId: firstCase.id,
       ChosenDiagnosisId: firstCase.diagnosisId,
+      Phase: CasePhase.COMPLETED,
+      Budget: 5,
+      TestsUsed: 2,
     },
   });
 
@@ -30,6 +34,9 @@ export async function seedAttempts(prisma: PrismaClient) {
       UserId: ids.users.assistant,
       CaseId: secondCase.id,
       ChosenDiagnosisId: ids.diagnoses.irreversiblePulpitis,
+      Phase: CasePhase.COMPLETED,
+      Budget: 5,
+      TestsUsed: 1,
     },
   });
 
