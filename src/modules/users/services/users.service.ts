@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User, UserRole } from '@prisma/client';
+import { v2 as cloudinary } from 'cloudinary';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { AdminUserListDto, UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
@@ -203,6 +204,30 @@ export class UsersService {
     await this.userRepository.updatePassword(userId, passwordHash);
   }
 
+  async updateAvatar(
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<{ avatarUrl: string }> {
+    if (!file) {
+      throw new BadRequestException('No image file provided');
+    }
+    const url = process.env.CLOUDINARY_URL ?? '';
+    const m = url.match(/^cloudinary:\/\/([^:]+):([^@]+)@(.+)$/);
+    if (!m) {
+      throw new BadRequestException('Cloudinary is not configured');
+    }
+    cloudinary.config({ cloud_name: m[3], api_key: m[1], api_secret: m[2] });
+    const uploaded = await new Promise<{ secure_url: string }>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'odonto/avatars' },
+        (error, result) => (error ? reject(error) : resolve(result as { secure_url: string })),
+      );
+      stream.end(file.buffer);
+    });
+    await this.userRepository.update(userId, { avatarUrl: uploaded.secure_url });
+    return { avatarUrl: uploaded.secure_url };
+  }
+
   async getLeaderboard(limit: number): Promise<LeaderboardEntryDto[]> {
     const users = await this.userRepository.getLeaderboard(limit);
     return users.map((u, i) => ({
@@ -278,6 +303,7 @@ export class UsersService {
       xpTotal: user.XpTotal,
       currentStreak: user.CurrentStreak,
       longestStreak: user.LongestStreak,
+      avatarUrl: user.AvatarUrl,
     };
   }
 }

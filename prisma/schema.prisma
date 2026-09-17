@@ -52,6 +52,7 @@ model User {
     LongestStreak     Int       @default(0)
     LastCompletedDate DateTime?
     DeletedAt         DateTime?
+    AvatarUrl         String?
   
     UserAttempt UserAttempt[]
   

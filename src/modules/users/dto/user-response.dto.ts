@@ -12,6 +12,8 @@ export class UserResponseDto {
   currentStreak!: number;
 
   longestStreak!: number;
+
+  avatarUrl!: string | null;
 }
 
 export class LeaderboardEntryDto {

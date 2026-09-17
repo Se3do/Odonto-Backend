@@ -6,9 +6,14 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { UsersService } from '../services/users.service';
 import { AdminUserListDto, UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
 import { UpdateUserRoleDto } from '../dto/update-user-role.dto';
@@ -18,6 +23,17 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/enums/roles.enum';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import type { AccessTokenPayload } from '../../auth/services/token.service';
+
+const avatarUploadOptions = {
+  storage: memoryStorage(),
+  fileFilter: (_req: any, file: Express.Multer.File, cb: (err: Error | null, accept: boolean) => void) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new BadRequestException('Only image files are allowed'), false);
+    }
+    cb(null, true);
+  },
+  limits: { fileSize: 5 * 1024 * 1024 },
+};
 
 const MAX_LEADERBOARD_LIMIT = 50;
 const DEFAULT_LEADERBOARD_LIMIT = 10;
@@ -39,6 +55,15 @@ export class UsersController {
   @Get('stats')
   getStats(@CurrentUser() user: AccessTokenPayload): Promise<UserStatsDto> {
     return this.usersService.getStats(user.sub);
+  }
+
+  @Post('avatar')
+  @UseInterceptors(FileInterceptor('file', avatarUploadOptions))
+  uploadAvatar(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: AccessTokenPayload,
+  ): Promise<{ avatarUrl: string }> {
+    return this.usersService.updateAvatar(user.sub, file);
   }
 
   @Get('leaderboard')

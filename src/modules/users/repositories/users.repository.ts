@@ -19,6 +19,7 @@ export interface UpdateUserData {
   username?: string;
   email?: string;
   role?: UserRole;
+  avatarUrl?: string;
   refreshTokenHash?: string | null;
   refreshTokenExpiresAt?: Date | null;
   refreshTokenFamily?: string | null;
@@ -101,6 +102,10 @@ export class UserRepository {
 
     if (data.role !== undefined) {
       updateData.Role = data.role;
+    }
+
+    if (data.avatarUrl !== undefined) {
+      updateData.AvatarUrl = data.avatarUrl;
     }
 
     if (data.refreshTokenHash !== undefined) {
