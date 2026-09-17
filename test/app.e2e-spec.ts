@@ -1,8 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { createTestApp } from './test-app';
 
 interface HealthResponse {
   status: string;
@@ -16,13 +15,12 @@ interface RegisterResponse {
 describe('App (e2e)', () => {
   let app: INestApplication<App>;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+  beforeAll(async () => {
+    app = await createTestApp();
+  });
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
+  afterAll(async () => {
+    await app.close();
   });
 
   it('/health (GET) reports the database is up', () => {
@@ -50,9 +48,5 @@ describe('App (e2e)', () => {
     expect((response.body as RegisterResponse).user?.email).toBe(
       `e2e${suffix}@t.com`,
     );
-  });
-
-  afterEach(async () => {
-    await app.close();
   });
 });
