@@ -63,7 +63,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       }
 
       const message =
-        typeof res === 'string' ? res : ((res as { message?: string }).message ?? exception.message);
+        typeof res === 'string'
+          ? res
+          : ((res as { message?: string }).message ?? exception.message);
 
       return {
         statusCode: status,

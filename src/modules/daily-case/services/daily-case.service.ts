@@ -1,8 +1,16 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { DailyCaseRepository } from '../repositories/daily-case.repository';
 import { CreateDailyCaseDto } from '../dto/create-daily-case.dto';
 import { UpdateDailyCaseDto } from '../dto/update-daily-case.dto';
-import { DailyCaseResponseDto, TodayDailyCaseResponseDto } from '../dto/daily-case-response.dto';
+import {
+  DailyCaseResponseDto,
+  TodayDailyCaseResponseDto,
+} from '../dto/daily-case-response.dto';
 
 @Injectable()
 export class DailyCaseService {
@@ -12,7 +20,9 @@ export class DailyCaseService {
     const date = this.parseDate(dto.date);
     const existing = await this.repository.findByDay(date);
     if (existing) {
-      throw new ConflictException('A daily case is already assigned for this date');
+      throw new ConflictException(
+        'A daily case is already assigned for this date',
+      );
     }
     await this.ensureCaseExists(dto.caseId);
     const dailyCase = await this.repository.create(date, dto.caseId);
@@ -56,7 +66,10 @@ export class DailyCaseService {
     };
   }
 
-  async update(dateParam: string, dto: UpdateDailyCaseDto): Promise<DailyCaseResponseDto> {
+  async update(
+    dateParam: string,
+    dto: UpdateDailyCaseDto,
+  ): Promise<DailyCaseResponseDto> {
     const date = this.parseDate(dateParam);
     const existing = await this.repository.findByDay(date);
     if (!existing) {
@@ -93,7 +106,11 @@ export class DailyCaseService {
     const m = Number(match[2]);
     const d = Number(match[3]);
     const date = new Date(y, m - 1, d);
-    if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
+    if (
+      date.getFullYear() !== y ||
+      date.getMonth() !== m - 1 ||
+      date.getDate() !== d
+    ) {
       throw new BadRequestException(`Invalid date: ${value}`);
     }
     return date;

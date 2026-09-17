@@ -28,7 +28,10 @@ export class MailService {
       });
     }
 
-    this.from = this.configService.get<string>('SMTP_FROM', '"Odonto" <no-reply@odonto.app>');
+    this.from = this.configService.get<string>(
+      'SMTP_FROM',
+      '"Odonto" <no-reply@odonto.app>',
+    );
   }
 
   isConfigured(): boolean {
@@ -39,9 +42,7 @@ export class MailService {
     const resetLink = `${this.configService.get<string>('FRONTEND_URL', 'http://localhost:8080')}/reset-password?token=${resetToken}`;
 
     if (!this.transporter) {
-      this.logger.log(
-        `[dev] Password reset for ${to}: link=${resetLink}`,
-      );
+      this.logger.log(`[dev] Password reset for ${to}: link=${resetLink}`);
       return;
     }
 

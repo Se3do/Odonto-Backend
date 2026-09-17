@@ -13,9 +13,7 @@ export class HealthCheckService {
 }
 
 export class PrismaHealthIndicator {
-  async pingCheck(
-    name: string,
-  ): Promise<Record<string, unknown>> {
+  async pingCheck(name: string): Promise<Record<string, unknown>> {
     return { [name]: { status: 'up' } };
   }
 }

@@ -17,7 +17,9 @@ export class DailyCaseRepository {
     const { start, end } = this.dayRange(date);
     return this.prismaService.dailyCase.findFirst({
       where: { Date: { gte: start, lte: end } },
-      include: { Case: { select: { Id: true, Title: true, Difficulty: true } } },
+      include: {
+        Case: { select: { Id: true, Title: true, Difficulty: true } },
+      },
     });
   }
 
@@ -49,14 +51,18 @@ export class DailyCaseRepository {
   findAll() {
     return this.prismaService.dailyCase.findMany({
       orderBy: { Date: 'desc' },
-      include: { Case: { select: { Id: true, Title: true, Difficulty: true } } },
+      include: {
+        Case: { select: { Id: true, Title: true, Difficulty: true } },
+      },
     });
   }
 
   create(date: Date, caseId: string) {
     return this.prismaService.dailyCase.create({
       data: { Date: date, CaseId: caseId },
-      include: { Case: { select: { Id: true, Title: true, Difficulty: true } } },
+      include: {
+        Case: { select: { Id: true, Title: true, Difficulty: true } },
+      },
     });
   }
 
@@ -64,7 +70,9 @@ export class DailyCaseRepository {
     return this.prismaService.dailyCase.update({
       where: { Id: id },
       data: { CaseId: caseId },
-      include: { Case: { select: { Id: true, Title: true, Difficulty: true } } },
+      include: {
+        Case: { select: { Id: true, Title: true, Difficulty: true } },
+      },
     });
   }
 
@@ -79,6 +87,8 @@ export class DailyCaseRepository {
   }
 
   hasCaseAssignment(caseId: string) {
-    return this.prismaService.dailyCase.findFirst({ where: { CaseId: caseId } });
+    return this.prismaService.dailyCase.findFirst({
+      where: { CaseId: caseId },
+    });
   }
 }

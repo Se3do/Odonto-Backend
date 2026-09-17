@@ -1,4 +1,9 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../../common/database/prisma.service';
 import { CreateCaseDto } from '../dto/create-case.dto';
 import { UpdateCaseDto } from '../dto/update-case.dto';
@@ -19,11 +24,23 @@ export class CaseValidationService {
       dto.treatments.map((t) => t.id),
     );
 
-    this.validateNoDuplicateIds(dto.tests.map((t) => t.id), 'test');
-    this.validateNoDuplicateIds(dto.treatments.map((t) => t.id), 'treatment');
+    this.validateNoDuplicateIds(
+      dto.tests.map((t) => t.id),
+      'test',
+    );
+    this.validateNoDuplicateIds(
+      dto.treatments.map((t) => t.id),
+      'treatment',
+    );
 
-    this.validateAtLeastOneCorrect(dto.tests.map((t) => t.isCorrect), 'test');
-    this.validateAtLeastOneCorrect(dto.treatments.map((t) => t.isCorrect), 'treatment');
+    this.validateAtLeastOneCorrect(
+      dto.tests.map((t) => t.isCorrect),
+      'test',
+    );
+    this.validateAtLeastOneCorrect(
+      dto.treatments.map((t) => t.isCorrect),
+      'treatment',
+    );
   }
 
   async validateUpdate(dto: UpdateCaseDto): Promise<void> {
@@ -37,24 +54,41 @@ export class CaseValidationService {
     }
 
     if (dto.tests) {
-      this.validateNoDuplicateIds(dto.tests.map((t) => t.id), 'test');
-      this.validateAtLeastOneCorrect(dto.tests.map((t) => t.isCorrect), 'test');
+      this.validateNoDuplicateIds(
+        dto.tests.map((t) => t.id),
+        'test',
+      );
+      this.validateAtLeastOneCorrect(
+        dto.tests.map((t) => t.isCorrect),
+        'test',
+      );
     }
     if (dto.treatments) {
-      this.validateNoDuplicateIds(dto.treatments.map((t) => t.id), 'treatment');
-      this.validateAtLeastOneCorrect(dto.treatments.map((t) => t.isCorrect), 'treatment');
+      this.validateNoDuplicateIds(
+        dto.treatments.map((t) => t.id),
+        'treatment',
+      );
+      this.validateAtLeastOneCorrect(
+        dto.treatments.map((t) => t.isCorrect),
+        'treatment',
+      );
     }
   }
 
   async validateDelete(caseId: string): Promise<void> {
     const existing = await this.repository.hasAttempts(caseId);
     if (existing) {
-      throw new ForbiddenException('Cannot delete a case that has student attempts');
+      throw new ForbiddenException(
+        'Cannot delete a case that has student attempts',
+      );
     }
 
-    const dailyAssignment = await this.repository.hasDailyCaseAssignment(caseId);
+    const dailyAssignment =
+      await this.repository.hasDailyCaseAssignment(caseId);
     if (dailyAssignment) {
-      throw new ForbiddenException('Cannot delete a case that is assigned to a daily case');
+      throw new ForbiddenException(
+        'Cannot delete a case that is assigned to a daily case',
+      );
     }
   }
 
@@ -65,17 +99,29 @@ export class CaseValidationService {
     treatmentIds?: string[],
   ): Promise<void> {
     if (diagnosisId) {
-      const diagnosis = await this.prismaService.diagnosis.findUnique({ where: { Id: diagnosisId } });
-      if (!diagnosis) throw new NotFoundException(`Diagnosis with id ${diagnosisId} was not found`);
+      const diagnosis = await this.prismaService.diagnosis.findUnique({
+        where: { Id: diagnosisId },
+      });
+      if (!diagnosis)
+        throw new NotFoundException(
+          `Diagnosis with id ${diagnosisId} was not found`,
+        );
     }
 
     if (specialtyId) {
-      const specialty = await this.prismaService.specialty.findUnique({ where: { Id: specialtyId } });
-      if (!specialty) throw new NotFoundException(`Specialty with id ${specialtyId} was not found`);
+      const specialty = await this.prismaService.specialty.findUnique({
+        where: { Id: specialtyId },
+      });
+      if (!specialty)
+        throw new NotFoundException(
+          `Specialty with id ${specialtyId} was not found`,
+        );
     }
 
     if (testIds && testIds.length > 0) {
-      const found = await this.prismaService.test.findMany({ where: { Id: { in: testIds } } });
+      const found = await this.prismaService.test.findMany({
+        where: { Id: { in: testIds } },
+      });
       const foundIds = new Set(found.map((t) => t.Id));
       const missing = testIds.filter((id) => !foundIds.has(id));
       if (missing.length > 0) {
@@ -84,11 +130,15 @@ export class CaseValidationService {
     }
 
     if (treatmentIds && treatmentIds.length > 0) {
-      const found = await this.prismaService.treatment.findMany({ where: { Id: { in: treatmentIds } } });
+      const found = await this.prismaService.treatment.findMany({
+        where: { Id: { in: treatmentIds } },
+      });
       const foundIds = new Set(found.map((t) => t.Id));
       const missing = treatmentIds.filter((id) => !foundIds.has(id));
       if (missing.length > 0) {
-        throw new BadRequestException(`Treatments not found: ${missing.join(', ')}`);
+        throw new BadRequestException(
+          `Treatments not found: ${missing.join(', ')}`,
+        );
       }
     }
   }
@@ -101,7 +151,9 @@ export class CaseValidationService {
 
   private validateAtLeastOneCorrect(results: boolean[], label: string): void {
     if (!results.some((r) => r)) {
-      throw new BadRequestException(`At least one ${label} must be marked as correct`);
+      throw new BadRequestException(
+        `At least one ${label} must be marked as correct`,
+      );
     }
   }
 }

@@ -11,7 +11,11 @@ export const CASE_IMAGE_TYPES = [
 
 export const imageUploadOptions = {
   storage: memoryStorage(),
-  fileFilter: (_req: any, file: Express.Multer.File, cb: (err: Error | null, accept: boolean) => void) => {
+  fileFilter: (
+    _req: any,
+    file: Express.Multer.File,
+    cb: (err: Error | null, accept: boolean) => void,
+  ) => {
     if (!file.mimetype.startsWith('image/')) {
       return cb(new BadRequestException('Only image files are allowed'), false);
     }

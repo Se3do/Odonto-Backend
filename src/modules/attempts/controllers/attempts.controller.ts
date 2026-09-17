@@ -1,4 +1,13 @@
-import { Body, Controller, Get, ForbiddenException, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  ForbiddenException,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { UserRole } from '@prisma/client';
@@ -40,7 +49,9 @@ export class AttemptsController {
   }
 
   @Post('start')
-  start(@CurrentUser() user: AccessTokenPayload): Promise<StartAttemptResponseDto> {
+  start(
+    @CurrentUser() user: AccessTokenPayload,
+  ): Promise<StartAttemptResponseDto> {
     return this.attemptService.startAttempt(user.sub);
   }
 

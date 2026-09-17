@@ -1,4 +1,14 @@
-import { IsArray, IsBoolean, IsEnum, IsOptional, IsString, IsUUID, ArrayNotEmpty, MinLength, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+  ArrayNotEmpty,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { Difficulty } from '@prisma/client';
 import { CaseTestItemDto, CaseTreatmentItemDto } from './create-case.dto';

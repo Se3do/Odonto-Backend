@@ -15,7 +15,12 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { UsersService } from '../services/users.service';
-import { AdminUserListDto, UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
+import {
+  AdminUserListDto,
+  UserResponseDto,
+  LeaderboardEntryDto,
+  UserStatsDto,
+} from '../dto/user-response.dto';
 import { UpdateUserRoleDto } from '../dto/update-user-role.dto';
 import { AccessTokenGuard } from '../../auth/guards/access-token.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
@@ -26,7 +31,11 @@ import type { AccessTokenPayload } from '../../auth/services/token.service';
 
 const avatarUploadOptions = {
   storage: memoryStorage(),
-  fileFilter: (_req: any, file: Express.Multer.File, cb: (err: Error | null, accept: boolean) => void) => {
+  fileFilter: (
+    _req: any,
+    file: Express.Multer.File,
+    cb: (err: Error | null, accept: boolean) => void,
+  ) => {
     if (!file.mimetype.startsWith('image/')) {
       return cb(new BadRequestException('Only image files are allowed'), false);
     }
@@ -48,7 +57,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('profile')
-  getProfile(@CurrentUser() user: AccessTokenPayload): Promise<UserResponseDto> {
+  getProfile(
+    @CurrentUser() user: AccessTokenPayload,
+  ): Promise<UserResponseDto> {
     return this.usersService.getProfile(user.sub);
   }
 

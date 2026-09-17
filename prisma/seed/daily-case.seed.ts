@@ -1,6 +1,6 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from '@prisma/client';
 
-import { dailyCaseDates } from "./constants";
+import { dailyCaseDates } from './constants';
 
 export async function seedDailyCases(prisma: PrismaClient) {
   await prisma.dailyCase.createMany({

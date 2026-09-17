@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Difficulty } from '@prisma/client';
-import { ScoringResult, TestResult, TreatmentResult } from '../types/attempt.types';
+import {
+  ScoringResult,
+  TestResult,
+  TreatmentResult,
+} from '../types/attempt.types';
 
 const SCORE_WEIGHTS = {
   [Difficulty.EASY]: { diagnosis: 40, tests: 30, treatments: 30 },
@@ -23,8 +27,16 @@ export class AttemptScoringService {
   ): ScoringResult {
     const diagnosisCorrect = chosenDiagnosisId === correctDiagnosisId;
 
-    const testResults = this.scoreTests(submittedTestIds, correctTestIds, allCaseTestIds);
-    const treatmentResults = this.scoreTreatments(submittedTreatmentIds, correctTreatmentIds, allCaseTreatmentIds);
+    const testResults = this.scoreTests(
+      submittedTestIds,
+      correctTestIds,
+      allCaseTestIds,
+    );
+    const treatmentResults = this.scoreTreatments(
+      submittedTreatmentIds,
+      correctTreatmentIds,
+      allCaseTreatmentIds,
+    );
 
     const finalScore = this.calculateFinalScore(
       diagnosisCorrect,

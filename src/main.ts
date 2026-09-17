@@ -13,10 +13,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'http://127.0.0.1:8080',
 ];
 
-function isAllowedOrigin(
-  origin: string,
-  allowedOrigins: string[],
-): boolean {
+function isAllowedOrigin(origin: string, allowedOrigins: string[]): boolean {
   for (const allowed of allowedOrigins) {
     if (allowed === origin) {
       return true;

@@ -1,4 +1,13 @@
-import { IsArray, IsBoolean, IsEnum, IsString, IsUUID, ArrayNotEmpty, MinLength, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsString,
+  IsUUID,
+  ArrayNotEmpty,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { Difficulty } from '@prisma/client';
 

@@ -1,6 +1,6 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from '@prisma/client';
 
-import { treatments } from "./constants";
+import { treatments } from './constants';
 
 export async function seedTreatments(prisma: PrismaClient) {
   await prisma.treatment.createMany({

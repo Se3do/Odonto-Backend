@@ -93,9 +93,8 @@ export class AuthService {
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
     const resetTokenHash = this.passwordService.hashToken(token);
-    const user = await this.usersService.findEntityByResetTokenHash(
-      resetTokenHash,
-    );
+    const user =
+      await this.usersService.findEntityByResetTokenHash(resetTokenHash);
 
     if (!user || !user.ResetTokenExpiresAt) {
       throw new BadRequestException('Invalid or expired reset token');

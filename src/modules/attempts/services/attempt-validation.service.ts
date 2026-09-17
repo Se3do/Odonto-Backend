@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { ValidatedAttemptContext } from '../types/attempt.types';
 import { AttemptsRepository } from '../repositories/attempts.repository';
 
@@ -29,25 +34,40 @@ export class AttemptValidationService {
       throw new NotFoundException('No daily case available for today');
     }
 
-    const existingAttempt = await this.repository.findExistingAttempt(userId, dailyCase.Case.Id);
+    const existingAttempt = await this.repository.findExistingAttempt(
+      userId,
+      dailyCase.Case.Id,
+    );
     if (existingAttempt) {
       throw new ForbiddenException('Daily case already completed');
     }
 
-    const caseTests = await this.repository.findCaseTestsByCaseId(dailyCase.Case.Id);
-    const caseTreatments = await this.repository.findCaseTreatmentsByCaseId(dailyCase.Case.Id);
+    const caseTests = await this.repository.findCaseTestsByCaseId(
+      dailyCase.Case.Id,
+    );
+    const caseTreatments = await this.repository.findCaseTreatmentsByCaseId(
+      dailyCase.Case.Id,
+    );
 
     const validTestIds = new Set(caseTests.map((ct) => ct.TestId));
-    const validTreatmentIds = new Set(caseTreatments.map((ct) => ct.TreatmentId));
+    const validTreatmentIds = new Set(
+      caseTreatments.map((ct) => ct.TreatmentId),
+    );
 
     const invalidTests = testIds.filter((id) => !validTestIds.has(id));
     if (invalidTests.length > 0) {
-      throw new BadRequestException(`Invalid test IDs: ${invalidTests.join(', ')}`);
+      throw new BadRequestException(
+        `Invalid test IDs: ${invalidTests.join(', ')}`,
+      );
     }
 
-    const invalidTreatments = treatmentIds.filter((id) => !validTreatmentIds.has(id));
+    const invalidTreatments = treatmentIds.filter(
+      (id) => !validTreatmentIds.has(id),
+    );
     if (invalidTreatments.length > 0) {
-      throw new BadRequestException(`Invalid treatment IDs: ${invalidTreatments.join(', ')}`);
+      throw new BadRequestException(
+        `Invalid treatment IDs: ${invalidTreatments.join(', ')}`,
+      );
     }
 
     const diagnosis = await this.repository.findDiagnosisById(diagnosisId);
@@ -55,6 +75,13 @@ export class AttemptValidationService {
       throw new NotFoundException('Diagnosis not found');
     }
 
-    return { user, dailyCase, case: dailyCase.Case, caseTests, caseTreatments, diagnosis };
+    return {
+      user,
+      dailyCase,
+      case: dailyCase.Case,
+      caseTests,
+      caseTreatments,
+      diagnosis,
+    };
   }
 }

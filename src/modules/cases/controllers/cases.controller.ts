@@ -1,10 +1,26 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CasesService } from '../services/cases.service';
 import { CreateCaseDto } from '../dto/create-case.dto';
 import { UpdateCaseDto } from '../dto/update-case.dto';
 import { CaseQueryDto } from '../dto/case-query.dto';
-import { CaseResponseDto, CaseImageResponseDto, PaginatedCaseResponseDto } from '../dto/case-response.dto';
+import {
+  CaseResponseDto,
+  CaseImageResponseDto,
+  PaginatedCaseResponseDto,
+} from '../dto/case-response.dto';
 import { AccessTokenGuard } from '../../auth/guards/access-token.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
@@ -51,14 +67,19 @@ export class CasesController {
   @Put(':id')
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Roles(Role.Admin)
-  update(@Param('id') id: string, @Body() dto: UpdateCaseDto): Promise<CaseResponseDto> {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateCaseDto,
+  ): Promise<CaseResponseDto> {
     return this.casesService.update(id, dto);
   }
 
   @Delete('images/:imageId')
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Roles(Role.Admin)
-  removeImage(@Param('imageId') imageId: string): Promise<CaseImageResponseDto> {
+  removeImage(
+    @Param('imageId') imageId: string,
+  ): Promise<CaseImageResponseDto> {
     return this.casesService.removeImage(imageId);
   }
 

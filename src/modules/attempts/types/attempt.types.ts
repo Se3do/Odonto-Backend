@@ -1,4 +1,13 @@
-import { Case, CaseTest, CaseTreatment, DailyCase, Diagnosis, Test, Treatment, User } from '@prisma/client';
+import {
+  Case,
+  CaseTest,
+  CaseTreatment,
+  DailyCase,
+  Diagnosis,
+  Test,
+  Treatment,
+  User,
+} from '@prisma/client';
 
 export interface ValidatedAttemptContext {
   user: User;

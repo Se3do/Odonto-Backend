@@ -9,7 +9,12 @@ import { User, UserRole } from '@prisma/client';
 import { v2 as cloudinary } from 'cloudinary';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { AdminUserListDto, UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
+import {
+  AdminUserListDto,
+  UserResponseDto,
+  LeaderboardEntryDto,
+  UserStatsDto,
+} from '../dto/user-response.dto';
 import {
   CreateUserData,
   UpdateUserData,
@@ -191,7 +196,11 @@ export class UsersService {
     resetTokenExpiresAt: Date,
   ): Promise<void> {
     await this.getUserOrThrow(userId);
-    await this.userRepository.setResetToken(userId, resetTokenHash, resetTokenExpiresAt);
+    await this.userRepository.setResetToken(
+      userId,
+      resetTokenHash,
+      resetTokenExpiresAt,
+    );
   }
 
   async clearResetToken(userId: string): Promise<void> {
@@ -217,14 +226,19 @@ export class UsersService {
       throw new BadRequestException('Cloudinary is not configured');
     }
     cloudinary.config({ cloud_name: m[3], api_key: m[1], api_secret: m[2] });
-    const uploaded = await new Promise<{ secure_url: string }>((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: 'odonto/avatars' },
-        (error, result) => (error ? reject(error) : resolve(result as { secure_url: string })),
-      );
-      stream.end(file.buffer);
+    const uploaded = await new Promise<{ secure_url: string }>(
+      (resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'odonto/avatars' },
+          (error, result) =>
+            error ? reject(error) : resolve(result as { secure_url: string }),
+        );
+        stream.end(file.buffer);
+      },
+    );
+    await this.userRepository.update(userId, {
+      avatarUrl: uploaded.secure_url,
     });
-    await this.userRepository.update(userId, { avatarUrl: uploaded.secure_url });
     return { avatarUrl: uploaded.secure_url };
   }
 

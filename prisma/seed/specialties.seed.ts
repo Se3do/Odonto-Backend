@@ -1,6 +1,6 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from '@prisma/client';
 
-import { specialties } from "./constants";
+import { specialties } from './constants';
 
 export async function seedSpecialties(prisma: PrismaClient) {
   await prisma.specialty.createMany({

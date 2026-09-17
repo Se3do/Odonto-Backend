@@ -1,8 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { DailyCaseService } from '../services/daily-case.service';
 import { CreateDailyCaseDto } from '../dto/create-daily-case.dto';
 import { UpdateDailyCaseDto } from '../dto/update-daily-case.dto';
-import { DailyCaseResponseDto, TodayDailyCaseResponseDto } from '../dto/daily-case-response.dto';
+import {
+  DailyCaseResponseDto,
+  TodayDailyCaseResponseDto,
+} from '../dto/daily-case-response.dto';
 import { AccessTokenGuard } from '../../auth/guards/access-token.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
@@ -36,7 +48,10 @@ export class DailyCaseController {
   @Put(':date')
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Roles(Role.Admin)
-  update(@Param('date') date: string, @Body() dto: UpdateDailyCaseDto): Promise<DailyCaseResponseDto> {
+  update(
+    @Param('date') date: string,
+    @Body() dto: UpdateDailyCaseDto,
+  ): Promise<DailyCaseResponseDto> {
     return this.dailyCaseService.update(date, dto);
   }
 

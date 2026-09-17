@@ -1,6 +1,6 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from '@prisma/client';
 
-import { users } from "./constants";
+import { users } from './constants';
 
 export async function seedUsers(prisma: PrismaClient) {
   await prisma.user.createMany({

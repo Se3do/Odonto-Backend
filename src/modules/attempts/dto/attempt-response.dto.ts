@@ -42,39 +42,48 @@ export class AttemptDetailDto {
   diagnosisExplanation!: string;
   case!: { id: string; title: string; difficulty: string };
   diagnosis!: { id: string; name: string } | null;
-  tests!: { testId: string; testName: string; isCorrect: boolean; result: string }[];
-  treatments!: { treatmentId: string; treatmentName: string; isCorrect: boolean }[];
+  tests!: {
+    testId: string;
+    testName: string;
+    isCorrect: boolean;
+    result: string;
+  }[];
+  treatments!: {
+    treatmentId: string;
+    treatmentName: string;
+    isCorrect: boolean;
+  }[];
   orderedTests!: { testId: string; testName: string; result: string }[];
 }
 
 export class AttemptListItemDto {
-    id!: string;
-    score!: number | null;
-    xpEarned!: number | null;
-    completedAt!: Date | null;
-    caseTitle!: string;
-    phase!: CasePhase;
-  }
+  id!: string;
+  score!: number | null;
+  xpEarned!: number | null;
+  completedAt!: Date | null;
+  caseTitle!: string;
+  phase!: CasePhase;
+}
 
-  export class PaginatedAttemptListDto {
-    items!: AttemptListItemDto[];
-    total!: number;
-    page!: number;
-    limit!: number;
-    totalPages!: number;
-  }
+export class PaginatedAttemptListDto {
+  items!: AttemptListItemDto[];
+  total!: number;
+  page!: number;
+  limit!: number;
+  totalPages!: number;
+}
 
-  export class PhaseCountDto {
-    phase!: CasePhase;
-    count!: number;
-  }
+export class PhaseCountDto {
+  phase!: CasePhase;
+  count!: number;
+}
 
-  export class AttemptAnalyticsDto {
-    totalCompleted!: number;
-    averageScore!: number | null;
-    totalXpEarned!: number;
-    byPhase!: PhaseCountDto[];
-  }
+export class AttemptAnalyticsDto {
+  totalCompleted!: number;
+  averageScore!: number | null;
+  totalXpEarned!: number;
+  byPhase!: PhaseCountDto[];
+}
 
 export class StartAttemptResponseDto {
   attemptId!: string;

@@ -27,7 +27,9 @@ interface CreateCaseData {
 export class CasesRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  runTransaction<T>(fn: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
+  runTransaction<T>(
+    fn: (tx: Prisma.TransactionClient) => Promise<T>,
+  ): Promise<T> {
     return this.prismaService.$transaction(fn);
   }
 
@@ -44,7 +46,11 @@ export class CasesRepository {
     });
   }
 
-  replaceCaseTests(tx: Prisma.TransactionClient, caseId: string, items: TestItem[]) {
+  replaceCaseTests(
+    tx: Prisma.TransactionClient,
+    caseId: string,
+    items: TestItem[],
+  ) {
     return tx.caseTest.createMany({
       data: items.map((item) => ({
         CaseId: caseId,
@@ -54,7 +60,11 @@ export class CasesRepository {
     });
   }
 
-  replaceCaseTreatments(tx: Prisma.TransactionClient, caseId: string, items: TreatmentItem[]) {
+  replaceCaseTreatments(
+    tx: Prisma.TransactionClient,
+    caseId: string,
+    items: TreatmentItem[],
+  ) {
     return tx.caseTreatment.createMany({
       data: items.map((item) => ({
         CaseId: caseId,
@@ -113,7 +123,8 @@ export class CasesRepository {
 
     const orderBy: Prisma.CaseOrderByWithRelationInput = {};
     const sortField = query.sortBy === 'title' ? 'Title' : 'CreatedAt';
-    orderBy[sortField as keyof Prisma.CaseOrderByWithRelationInput] = query.sortOrder;
+    orderBy[sortField as keyof Prisma.CaseOrderByWithRelationInput] =
+      query.sortOrder;
 
     const skip = (query.page! - 1) * query.limit!;
     const take = query.limit!;
@@ -142,14 +153,23 @@ export class CasesRepository {
     return [cases, total] as const;
   }
 
-  updateCase(tx: Prisma.TransactionClient, id: string, data: Omit<UpdateCaseDto, 'tests' | 'treatments'>) {
+  updateCase(
+    tx: Prisma.TransactionClient,
+    id: string,
+    data: Omit<UpdateCaseDto, 'tests' | 'treatments'>,
+  ) {
     const updateData: Prisma.CaseUpdateInput = {};
     if (data.title !== undefined) updateData.Title = data.title;
-    if (data.patientHistory !== undefined) updateData.PatientHistory = data.patientHistory;
-    if (data.diagnosisExplanation !== undefined) updateData.DiagnosisExplanation = data.diagnosisExplanation;
-    if (data.difficulty !== undefined) updateData.Difficulty = data.difficulty as any;
-    if (data.diagnosisId !== undefined) updateData.Diagnosis = { connect: { Id: data.diagnosisId } };
-    if (data.specialtyId !== undefined) updateData.Specialty = { connect: { Id: data.specialtyId } };
+    if (data.patientHistory !== undefined)
+      updateData.PatientHistory = data.patientHistory;
+    if (data.diagnosisExplanation !== undefined)
+      updateData.DiagnosisExplanation = data.diagnosisExplanation;
+    if (data.difficulty !== undefined)
+      updateData.Difficulty = data.difficulty as any;
+    if (data.diagnosisId !== undefined)
+      updateData.Diagnosis = { connect: { Id: data.diagnosisId } };
+    if (data.specialtyId !== undefined)
+      updateData.Specialty = { connect: { Id: data.specialtyId } };
 
     return tx.case.update({
       where: { Id: id },
@@ -165,7 +185,9 @@ export class CasesRepository {
   }
 
   hasAttempts(caseId: string) {
-    return this.prismaService.userAttempt.findFirst({ where: { CaseId: caseId } });
+    return this.prismaService.userAttempt.findFirst({
+      where: { CaseId: caseId },
+    });
   }
 
   createImage(caseId: string, url: string, imageType: string) {
@@ -183,6 +205,8 @@ export class CasesRepository {
   }
 
   hasDailyCaseAssignment(caseId: string) {
-    return this.prismaService.dailyCase.findFirst({ where: { CaseId: caseId } });
+    return this.prismaService.dailyCase.findFirst({
+      where: { CaseId: caseId },
+    });
   }
 }

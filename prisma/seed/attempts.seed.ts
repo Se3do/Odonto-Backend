@@ -1,8 +1,8 @@
-import { CasePhase } from "@prisma/client";
-import type { PrismaClient } from "@prisma/client";
+import { CasePhase } from '@prisma/client';
+import type { PrismaClient } from '@prisma/client';
 
-import { caseDefinitions } from "./constants";
-import { ids } from "./ids";
+import { caseDefinitions } from './constants';
+import { ids } from './ids';
 
 export async function seedAttempts(prisma: PrismaClient) {
   const firstCase = caseDefinitions[0];
@@ -13,8 +13,8 @@ export async function seedAttempts(prisma: PrismaClient) {
       Id: ids.attempts.one,
       Score: 85,
       XpEarned: 120,
-      StartedAt: new Date("2026-01-14T17:00:00.000Z"),
-      CompletedAt: new Date("2026-01-14T17:18:00.000Z"),
+      StartedAt: new Date('2026-01-14T17:00:00.000Z'),
+      CompletedAt: new Date('2026-01-14T17:18:00.000Z'),
       UserId: ids.users.admin,
       CaseId: firstCase.id,
       ChosenDiagnosisId: firstCase.diagnosisId,
@@ -29,7 +29,7 @@ export async function seedAttempts(prisma: PrismaClient) {
       Id: ids.attempts.two,
       Score: 40,
       XpEarned: 35,
-      StartedAt: new Date("2026-01-14T18:00:00.000Z"),
+      StartedAt: new Date('2026-01-14T18:00:00.000Z'),
       CompletedAt: null,
       UserId: ids.users.assistant,
       CaseId: secondCase.id,

@@ -1,10 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import {
-  ACCESS_TOKEN_SUBJECT,
-  REFRESH_TOKEN_SUBJECT,
-} from '../auth.constants';
+import { ACCESS_TOKEN_SUBJECT, REFRESH_TOKEN_SUBJECT } from '../auth.constants';
 
 export interface AccessTokenPayload {
   sub: string;
