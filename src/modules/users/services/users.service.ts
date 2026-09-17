@@ -66,6 +66,12 @@ export class UsersService {
     return this.userRepository.findById(id);
   }
 
+  async findEntityByResetTokenHash(
+    resetTokenHash: string,
+  ): Promise<User | null> {
+    return this.userRepository.findByResetTokenHash(resetTokenHash);
+  }
+
   async findByUsername(username: string): Promise<UserResponseDto | null> {
     const user = await this.userRepository.findByUsername(
       this.normalizeUsername(username),
@@ -132,6 +138,25 @@ export class UsersService {
   async clearRefreshToken(userId: string): Promise<void> {
     await this.getUserOrThrow(userId);
     await this.userRepository.clearRefreshToken(userId);
+  }
+
+  async setResetToken(
+    userId: string,
+    resetTokenHash: string,
+    resetTokenExpiresAt: Date,
+  ): Promise<void> {
+    await this.getUserOrThrow(userId);
+    await this.userRepository.setResetToken(userId, resetTokenHash, resetTokenExpiresAt);
+  }
+
+  async clearResetToken(userId: string): Promise<void> {
+    await this.getUserOrThrow(userId);
+    await this.userRepository.clearResetToken(userId);
+  }
+
+  async updatePassword(userId: string, passwordHash: string): Promise<void> {
+    await this.getUserOrThrow(userId);
+    await this.userRepository.updatePassword(userId, passwordHash);
   }
 
   async getLeaderboard(limit: number): Promise<LeaderboardEntryDto[]> {

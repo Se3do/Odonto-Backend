@@ -1,5 +1,6 @@
-import { randomUUID } from 'crypto';
+import { randomBytes, randomUUID } from 'crypto';
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -62,6 +63,46 @@ export class AuthService {
 
   async logout(userId: string): Promise<void> {
     await this.usersService.clearRefreshToken(userId);
+  }
+
+  async forgotPassword(email: string): Promise<{ resetToken: string }> {
+    const user = await this.usersService.findEntityByEmail(email);
+
+    if (!user) {
+      return { resetToken: '' };
+    }
+
+    const resetToken = randomBytes(32).toString('hex');
+    const resetTokenHash = this.passwordService.hashToken(resetToken);
+    const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+    await this.usersService.setResetToken(
+      user.Id,
+      resetTokenHash,
+      resetTokenExpiresAt,
+    );
+
+    return { resetToken };
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const resetTokenHash = this.passwordService.hashToken(token);
+    const user = await this.usersService.findEntityByResetTokenHash(
+      resetTokenHash,
+    );
+
+    if (!user || !user.ResetTokenExpiresAt) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    if (user.ResetTokenExpiresAt.getTime() <= Date.now()) {
+      throw new BadRequestException('Reset token has expired');
+    }
+
+    const passwordHash = await this.passwordService.hash(newPassword);
+    await this.usersService.updatePassword(user.Id, passwordHash);
+    await this.usersService.clearResetToken(user.Id);
+    await this.usersService.clearRefreshToken(user.Id);
   }
 
   async me(userId: string): Promise<UserResponseDto> {

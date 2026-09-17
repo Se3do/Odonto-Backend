@@ -21,6 +21,9 @@ export interface UpdateUserData {
   refreshTokenHash?: string | null;
   refreshTokenExpiresAt?: Date | null;
   refreshTokenFamily?: string | null;
+  resetTokenHash?: string | null;
+  resetTokenExpiresAt?: Date | null;
+  passwordHash?: string;
 }
 
 export interface UserExistsCriteria {
@@ -73,6 +76,14 @@ export class UserRepository {
     });
   }
 
+  findByResetTokenHash(resetTokenHash: string): Promise<User | null> {
+    return this.prismaService.user.findFirst({
+      where: {
+        ResetTokenHash: resetTokenHash,
+      },
+    });
+  }
+
   update(id: string, data: UpdateUserData): Promise<User> {
     const updateData: Prisma.UserUpdateInput = {};
 
@@ -94,6 +105,18 @@ export class UserRepository {
 
     if (data.refreshTokenFamily !== undefined) {
       updateData.RefreshTokenFamily = data.refreshTokenFamily;
+    }
+
+    if (data.resetTokenHash !== undefined) {
+      updateData.ResetTokenHash = data.resetTokenHash;
+    }
+
+    if (data.resetTokenExpiresAt !== undefined) {
+      updateData.ResetTokenExpiresAt = data.resetTokenExpiresAt;
+    }
+
+    if (data.passwordHash !== undefined) {
+      updateData.PasswordHash = data.passwordHash;
     }
 
     return this.prismaService.user.update({
@@ -131,6 +154,28 @@ export class UserRepository {
       refreshTokenExpiresAt: null,
       refreshTokenFamily: null,
     });
+  }
+
+  setResetToken(
+    id: string,
+    resetTokenHash: string,
+    resetTokenExpiresAt: Date,
+  ): Promise<User> {
+    return this.update(id, {
+      resetTokenHash,
+      resetTokenExpiresAt,
+    });
+  }
+
+  clearResetToken(id: string): Promise<User> {
+    return this.update(id, {
+      resetTokenHash: null,
+      resetTokenExpiresAt: null,
+    });
+  }
+
+  updatePassword(id: string, passwordHash: string): Promise<User> {
+    return this.update(id, { passwordHash });
   }
 
   getLeaderboard(limit: number) {

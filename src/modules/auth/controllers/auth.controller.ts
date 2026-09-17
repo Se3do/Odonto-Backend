@@ -9,9 +9,11 @@ import {
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from '../services/auth.service';
 import { AuthResponseDto } from '../dto/auth-response.dto';
+import { ForgotPasswordDto } from '../dto/forgot-password.dto';
 import { LoginDto } from '../dto/login.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { RegisterDto } from '../dto/register.dto';
+import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { AccessTokenGuard } from '../guards/access-token.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { UserResponseDto } from '../../users/dto/user-response.dto';
@@ -46,6 +48,25 @@ export class AuthController {
   @HttpCode(204)
   async logout(@CurrentUser('sub') userId: string): Promise<void> {
     await this.authService.logout(userId);
+  }
+
+  @Post('forgot-password')
+  @HttpCode(200)
+  async forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<{ resetToken: string }> {
+    return this.authService.forgotPassword(forgotPasswordDto.email);
+  }
+
+  @Post('reset-password')
+  @HttpCode(200)
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ): Promise<void> {
+    await this.authService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto.password,
+    );
   }
 
   @UseGuards(AccessTokenGuard)

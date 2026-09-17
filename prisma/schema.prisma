@@ -44,6 +44,9 @@ model User {
   RefreshTokenExpiresAt DateTime?
   RefreshTokenFamily   String?
 
+  ResetTokenHash      String?
+  ResetTokenExpiresAt DateTime?
+
   XpTotal           Int       @default(0)
   CurrentStreak     Int       @default(0)
   LongestStreak     Int       @default(0)
