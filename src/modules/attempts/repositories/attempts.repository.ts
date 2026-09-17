@@ -116,19 +116,24 @@ export class AttemptsRepository {
     });
   }
 
-  findAttemptsByUserId(userId: string) {
-    return this.prismaService.userAttempt.findMany({
-      where: { UserId: userId },
-      orderBy: { CompletedAt: { sort: 'desc', nulls: 'last' } },
-      select: {
-        Id: true,
-        Score: true,
-        XpEarned: true,
-        CompletedAt: true,
-        Phase: true,
-        Case: { select: { Title: true } },
-      },
-    });
+  findAttemptsByUserIdPaginated(userId: string, skip: number, take: number) {
+    return Promise.all([
+      this.prismaService.userAttempt.count({ where: { UserId: userId } }),
+      this.prismaService.userAttempt.findMany({
+        where: { UserId: userId },
+        orderBy: { CompletedAt: { sort: 'desc', nulls: 'last' } },
+        skip,
+        take,
+        select: {
+          Id: true,
+          Score: true,
+          XpEarned: true,
+          CompletedAt: true,
+          Phase: true,
+          Case: { select: { Title: true } },
+        },
+      }),
+    ]);
   }
 
   runTransaction<T>(

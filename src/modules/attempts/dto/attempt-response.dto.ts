@@ -48,13 +48,21 @@ export class AttemptDetailDto {
 }
 
 export class AttemptListItemDto {
-  id!: string;
-  score!: number | null;
-  xpEarned!: number | null;
-  completedAt!: Date | null;
-  caseTitle!: string;
-  phase!: CasePhase;
-}
+    id!: string;
+    score!: number | null;
+    xpEarned!: number | null;
+    completedAt!: Date | null;
+    caseTitle!: string;
+    phase!: CasePhase;
+  }
+
+  export class PaginatedAttemptListDto {
+    items!: AttemptListItemDto[];
+    total!: number;
+    page!: number;
+    limit!: number;
+    totalPages!: number;
+  }
 
 export class StartAttemptResponseDto {
   attemptId!: string;

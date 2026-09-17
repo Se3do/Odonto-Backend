@@ -15,6 +15,7 @@ import {
   AttemptTreatmentGroup,
   AttemptDetailDto,
   AttemptListItemDto,
+  PaginatedAttemptListDto,
   StartAttemptResponseDto,
   OrderTestResponseDto,
   DiagnoseResponseDto,
@@ -340,16 +341,31 @@ export class AttemptService {
     return attempt ? this.toDetailDto(attempt) : null;
   }
 
-  async getAttemptsByUserId(userId: string): Promise<AttemptListItemDto[]> {
-    const attempts = await this.repository.findAttemptsByUserId(userId);
-    return attempts.map((a) => ({
-      id: a.Id,
-      score: a.Score,
-      xpEarned: a.XpEarned,
-      completedAt: a.CompletedAt,
-      caseTitle: a.Case.Title,
-      phase: a.Phase,
-    }));
+  async getAttemptsByUserId(
+    userId: string,
+    page = 1,
+    limit = 20,
+  ): Promise<PaginatedAttemptListDto> {
+    const [total, attempts] =
+      await this.repository.findAttemptsByUserIdPaginated(
+        userId,
+        (page - 1) * limit,
+        limit,
+      );
+    return {
+      items: attempts.map((a) => ({
+        id: a.Id,
+        score: a.Score,
+        xpEarned: a.XpEarned,
+        completedAt: a.CompletedAt,
+        caseTitle: a.Case.Title,
+        phase: a.Phase,
+      })),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   private toDetailDto(a: any): AttemptDetailDto {

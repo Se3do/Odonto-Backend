@@ -1,4 +1,4 @@
-import { Body, Controller, Get, ForbiddenException, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, ForbiddenException, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { UserRole } from '@prisma/client';
@@ -11,6 +11,7 @@ import {
   AttemptResponseDto,
   AttemptDetailDto,
   AttemptListItemDto,
+  PaginatedAttemptListDto,
   StartAttemptResponseDto,
   OrderTestResponseDto,
   DiagnoseResponseDto,
@@ -68,13 +69,24 @@ export class AttemptsController {
   findByUser(
     @Param('userId') userId: string,
     @CurrentUser() user: AccessTokenPayload,
-  ): Promise<AttemptListItemDto[]> {
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<PaginatedAttemptListDto> {
     if (user.sub !== userId && user.role !== UserRole.ADMIN) {
       throw new ForbiddenException(
         'You can only view your own attempt history',
       );
     }
-    return this.attemptService.getAttemptsByUserId(userId);
+    const parsedPage = Math.max(parseInt(page ?? '1', 10) || 1, 1);
+    const parsedLimit = Math.min(
+      Math.max(parseInt(limit ?? '20', 10) || 20, 1),
+      100,
+    );
+    return this.attemptService.getAttemptsByUserId(
+      userId,
+      parsedPage,
+      parsedLimit,
+    );
   }
 
   @Get(':id')
