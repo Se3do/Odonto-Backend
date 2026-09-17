@@ -25,6 +25,8 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/odonto_db?schema=public
+      JWT_ACCESS_SECRET: ci-access-secret-at-least-16-chars
+      JWT_REFRESH_SECRET: ci-refresh-secret-at-least-16-chars
 
     steps:
       - uses: actions/checkout@v4
