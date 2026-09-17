@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, User, UserRole } from '@prisma/client';
 import { PrismaService } from '../../../common/database/prisma.service';
 
 export interface CreateUserData {
@@ -18,6 +18,7 @@ export interface CreateUserData {
 export interface UpdateUserData {
   username?: string;
   email?: string;
+  role?: UserRole;
   refreshTokenHash?: string | null;
   refreshTokenExpiresAt?: Date | null;
   refreshTokenFamily?: string | null;
@@ -93,6 +94,10 @@ export class UserRepository {
 
     if (data.email !== undefined) {
       updateData.Email = data.email;
+    }
+
+    if (data.role !== undefined) {
+      updateData.Role = data.role;
     }
 
     if (data.refreshTokenHash !== undefined) {
@@ -176,6 +181,39 @@ export class UserRepository {
 
   updatePassword(id: string, passwordHash: string): Promise<User> {
     return this.update(id, { passwordHash });
+  }
+
+  countUsers(search: string): Promise<number> {
+    return this.prismaService.user.count({ where: this.searchWhere(search) });
+  }
+
+  listUsers(search: string, skip: number, take: number) {
+    return this.prismaService.user.findMany({
+      where: this.searchWhere(search),
+      orderBy: { UserName: 'asc' },
+      skip,
+      take,
+      select: {
+        Id: true,
+        UserName: true,
+        Email: true,
+        Role: true,
+        XpTotal: true,
+        CurrentStreak: true,
+        LongestStreak: true,
+      },
+    });
+  }
+
+  private searchWhere(search: string): Prisma.UserWhereInput {
+    return search
+      ? {
+          OR: [
+            { UserName: { contains: search, mode: 'insensitive' } },
+            { Email: { contains: search, mode: 'insensitive' } },
+          ],
+        }
+      : {};
   }
 
   getLeaderboard(limit: number) {

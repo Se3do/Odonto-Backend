@@ -1,13 +1,14 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
+import { AdminUserListDto, UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
 import {
   CreateUserData,
   UpdateUserData,
@@ -118,6 +119,49 @@ export class UsersService {
     const user = await this.getUserOrThrow(id);
     const deletedUser = await this.userRepository.delete(user.Id);
     return this.toResponseDto(deletedUser);
+  }
+
+  async updateRole(
+    id: string,
+    role: UserRole,
+    actorId: string,
+  ): Promise<UserResponseDto> {
+    await this.getUserOrThrow(id);
+
+    if (id === actorId && role !== UserRole.ADMIN) {
+      throw new ForbiddenException('You cannot demote yourself');
+    }
+
+    const updatedUser = await this.userRepository.update(id, { role });
+    return this.toResponseDto(updatedUser);
+  }
+
+  async listUsers(
+    search: string,
+    page: number,
+    limit: number,
+  ): Promise<AdminUserListDto> {
+    const [total, users] = await Promise.all([
+      this.userRepository.countUsers(search),
+      this.userRepository.listUsers(search, (page - 1) * limit, limit),
+    ]);
+
+    return {
+      items: users.map((u) => ({
+        id: u.Id,
+        username: u.UserName,
+        email: u.Email,
+        role: u.Role,
+        xpTotal: u.XpTotal,
+        currentStreak: u.CurrentStreak,
+        longestStreak: u.LongestStreak,
+      })),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      search,
+    };
   }
 
   async setRefreshToken(

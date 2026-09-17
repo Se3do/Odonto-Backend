@@ -1,13 +1,21 @@
 import {
   BadRequestException,
+  Body,
   Controller,
+  Delete,
   Get,
+  Param,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
-import { UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
+import { AdminUserListDto, UserResponseDto, LeaderboardEntryDto, UserStatsDto } from '../dto/user-response.dto';
+import { UpdateUserRoleDto } from '../dto/update-user-role.dto';
 import { AccessTokenGuard } from '../../auth/guards/access-token.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../auth/enums/roles.enum';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import type { AccessTokenPayload } from '../../auth/services/token.service';
 
@@ -38,6 +46,46 @@ export class UsersController {
     @Query('limit') limit?: string,
   ): Promise<LeaderboardEntryDto[]> {
     return this.usersService.getLeaderboard(this.parseLimit(limit));
+  }
+
+  @Get()
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  @Roles(Role.Admin)
+  listUsers(
+    @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<AdminUserListDto> {
+    const parsedPage = Math.max(parseInt(page ?? '1', 10) || 1, 1);
+    const parsedLimit = Math.min(
+      Math.max(parseInt(limit ?? '20', 10) || 20, 1),
+      100,
+    );
+    return this.usersService.listUsers(search ?? '', parsedPage, parsedLimit);
+  }
+
+  @Patch(':id/role')
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  @Roles(Role.Admin)
+  updateRole(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserRoleDto,
+    @CurrentUser() user: AccessTokenPayload,
+  ): Promise<UserResponseDto> {
+    return this.usersService.updateRole(id, dto.role, user.sub);
+  }
+
+  @Delete(':id')
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  @Roles(Role.Admin)
+  remove(
+    @Param('id') id: string,
+    @CurrentUser() user: AccessTokenPayload,
+  ): Promise<UserResponseDto> {
+    if (id === user.sub) {
+      throw new BadRequestException('You cannot delete your own account');
+    }
+    return this.usersService.delete(id);
   }
 
   private parseLimit(value?: string): number {
