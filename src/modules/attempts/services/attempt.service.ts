@@ -45,13 +45,14 @@ type AttemptWithCasePayload = Prisma.UserAttemptGetPayload<{
         Diagnosis: { select: { Id: true; Name: true } };
       };
     };
-    Diagnosis: { select: { Id: true; Name: true } };
     AttemptTests: { include: { CaseTest: { include: { Test: true } } } };
     AttemptTreatments: {
       include: { CaseTreatment: { include: { Treatment: true } } };
     };
   };
-}>;
+}> & {
+  Diagnosis?: { Id: string; Name: string } | null;
+};
 
 @Injectable()
 export class AttemptService {
