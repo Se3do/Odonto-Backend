@@ -15,6 +15,7 @@ import {
   AttemptTreatmentGroup,
   AttemptDetailDto,
   AttemptListItemDto,
+  AttemptAnalyticsDto,
   PaginatedAttemptListDto,
   StartAttemptResponseDto,
   OrderTestResponseDto,
@@ -339,6 +340,16 @@ export class AttemptService {
   async getAttemptById(id: string): Promise<AttemptDetailDto | null> {
     const attempt = await this.repository.findAttemptByIdWithCase(id);
     return attempt ? this.toDetailDto(attempt) : null;
+  }
+
+  async getAnalytics(): Promise<AttemptAnalyticsDto> {
+    const [aggregate, byPhase] = await this.repository.getAnalytics();
+    return {
+      totalCompleted: aggregate._count.Id,
+      averageScore: aggregate._avg.Score,
+      totalXpEarned: aggregate._sum.XpEarned ?? 0,
+      byPhase: byPhase.map((p) => ({ phase: p.Phase, count: p._count.Id })),
+    };
   }
 
   async getAttemptsByUserId(

@@ -64,6 +64,18 @@ export class AttemptListItemDto {
     totalPages!: number;
   }
 
+  export class PhaseCountDto {
+    phase!: CasePhase;
+    count!: number;
+  }
+
+  export class AttemptAnalyticsDto {
+    totalCompleted!: number;
+    averageScore!: number | null;
+    totalXpEarned!: number;
+    byPhase!: PhaseCountDto[];
+  }
+
 export class StartAttemptResponseDto {
   attemptId!: string;
   phase!: CasePhase;

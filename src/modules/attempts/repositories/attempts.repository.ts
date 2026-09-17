@@ -141,4 +141,19 @@ export class AttemptsRepository {
   ): Promise<T> {
     return this.prismaService.$transaction(fn);
   }
+
+  getAnalytics() {
+    return Promise.all([
+      this.prismaService.userAttempt.aggregate({
+        where: { Phase: CasePhase.COMPLETED },
+        _count: { Id: true },
+        _avg: { Score: true },
+        _sum: { XpEarned: true },
+      }),
+      this.prismaService.userAttempt.groupBy({
+        by: ['Phase'],
+        _count: { Id: true },
+      }),
+    ]);
+  }
 }

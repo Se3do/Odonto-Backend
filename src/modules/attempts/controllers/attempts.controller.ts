@@ -11,6 +11,7 @@ import {
   AttemptResponseDto,
   AttemptDetailDto,
   AttemptListItemDto,
+  AttemptAnalyticsDto,
   PaginatedAttemptListDto,
   StartAttemptResponseDto,
   OrderTestResponseDto,
@@ -18,6 +19,9 @@ import {
   TreatResponseDto,
 } from '../dto/attempt-response.dto';
 import { AccessTokenGuard } from '../../auth/guards/access-token.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../auth/enums/roles.enum';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import type { AccessTokenPayload } from '../../auth/services/token.service';
 
@@ -27,6 +31,13 @@ import type { AccessTokenPayload } from '../../auth/services/token.service';
 @UseGuards(AccessTokenGuard)
 export class AttemptsController {
   constructor(private readonly attemptService: AttemptService) {}
+
+  @Get('analytics')
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  @Roles(Role.Admin)
+  analytics(): Promise<AttemptAnalyticsDto> {
+    return this.attemptService.getAnalytics();
+  }
 
   @Post('start')
   start(@CurrentUser() user: AccessTokenPayload): Promise<StartAttemptResponseDto> {
