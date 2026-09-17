@@ -42,6 +42,8 @@ jobs:
 
       - run: npx prisma migrate deploy
 
+      - run: npx eslint --no-fix "{src,apps,libs,test}/**/*.ts"
+
       - run: npm run build
       - run: npm test
       - run: npm run test:e2e
