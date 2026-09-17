@@ -8,6 +8,10 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/enums/roles.enum';
 
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('daily-case')
+@ApiBearerAuth()
 @Controller('daily-case')
 export class DailyCaseController {
   constructor(private readonly dailyCaseService: DailyCaseService) {}

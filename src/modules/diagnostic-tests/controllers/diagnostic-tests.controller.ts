@@ -17,6 +17,10 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/enums/roles.enum';
 
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('diagnostic-tests')
+@ApiBearerAuth()
 @Controller('diagnostic-tests')
 export class DiagnosticTestsController {
   constructor(

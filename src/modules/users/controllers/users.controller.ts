@@ -14,6 +14,10 @@ import type { AccessTokenPayload } from '../../auth/services/token.service';
 const MAX_LEADERBOARD_LIMIT = 50;
 const DEFAULT_LEADERBOARD_LIMIT = 10;
 
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('users')
+@ApiBearerAuth()
 @Controller('users')
 @UseGuards(AccessTokenGuard)
 export class UsersController {

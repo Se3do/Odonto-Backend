@@ -6,6 +6,9 @@ import {
 } from '@nestjs/terminus';
 import { PrismaService } from '../database/prisma.service';
 
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('health')
 @Controller('health')
 export class HealthController {
   constructor(

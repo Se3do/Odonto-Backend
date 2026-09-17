@@ -11,6 +11,10 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/enums/roles.enum';
 import { imageUploadOptions } from '../cases-upload.config';
 
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('cases')
+@ApiBearerAuth()
 @Controller('cases')
 export class CasesController {
   constructor(private readonly casesService: CasesService) {}

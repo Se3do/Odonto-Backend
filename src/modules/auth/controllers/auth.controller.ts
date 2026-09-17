@@ -18,6 +18,10 @@ import { AccessTokenGuard } from '../guards/access-token.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { UserResponseDto } from '../../users/dto/user-response.dto';
 
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('auth')
+@ApiBearerAuth()
 @Controller('auth')
 @Throttle({ default: { limit: 10, ttl: 60000 } })
 export class AuthController {

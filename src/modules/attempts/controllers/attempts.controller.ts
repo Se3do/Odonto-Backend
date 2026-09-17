@@ -1,4 +1,6 @@
 import { Body, Controller, Get, ForbiddenException, Param, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
 import { UserRole } from '@prisma/client';
 import { AttemptService } from '../services/attempt.service';
 import { CreateAttemptDto } from '../dto/create-attempt.dto';
@@ -18,6 +20,8 @@ import { AccessTokenGuard } from '../../auth/guards/access-token.guard';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import type { AccessTokenPayload } from '../../auth/services/token.service';
 
+@ApiTags('attempts')
+@ApiBearerAuth()
 @Controller('attempts')
 @UseGuards(AccessTokenGuard)
 export class AttemptsController {
