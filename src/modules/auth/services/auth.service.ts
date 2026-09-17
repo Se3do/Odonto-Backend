@@ -7,6 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { MailService } from '../../../common/mail/mail.service';
 import { UserResponseDto } from '../../users/dto/user-response.dto';
 import { UsersService } from '../../users/services/users.service';
 import { AuthResponseDto } from '../dto/auth-response.dto';
@@ -23,6 +24,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly passwordService: PasswordService,
     private readonly tokenService: TokenService,
+    private readonly mailService: MailService,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
@@ -82,7 +84,11 @@ export class AuthService {
       resetTokenExpiresAt,
     );
 
-    return { resetToken };
+    await this.mailService.sendPasswordReset(user.Email, resetToken);
+
+    return this.mailService.isConfigured()
+      ? { resetToken: '' }
+      : { resetToken };
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {

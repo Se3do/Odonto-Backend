@@ -5,6 +5,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { validateEnv } from './common/config/env.validation';
 import { PrismaModule } from './common/database/prisma.module';
 import { HealthModule } from './common/health/health.module';
+import { MailModule } from './common/mail/mail.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { SpecialtiesModule } from './modules/specialties/specialties.module';
@@ -27,6 +28,7 @@ import { DailyCaseModule } from './modules/daily-case/daily-case.module';
     ]),
     PrismaModule,
     HealthModule,
+    MailModule,
     UsersModule,
     AuthModule,
     SpecialtiesModule,
