@@ -77,8 +77,11 @@ export class CasesRepository {
   }
 
   findById(id: string) {
-    return this.prismaService.case.findUnique({
-      where: { Id: id },
+    return this.prismaService.case.findFirst({
+      where: {
+        Id: id,
+        DeletedAt: null,
+      },
       include: {
         Specialty: { select: { Id: true, Name: true } },
         Diagnosis: { select: { Id: true, Name: true } },
@@ -94,7 +97,9 @@ export class CasesRepository {
   }
 
   async findMany(query: CaseQueryDto) {
-    const where: Prisma.CaseWhereInput = {};
+    const where: Prisma.CaseWhereInput = {
+      DeletedAt: null,
+    };
 
     if (query.search) {
       where.Title = { contains: query.search, mode: 'insensitive' };
@@ -153,7 +158,10 @@ export class CasesRepository {
   }
 
   deleteCase(tx: Prisma.TransactionClient, id: string) {
-    return tx.case.delete({ where: { Id: id } });
+    return tx.case.update({
+      where: { Id: id },
+      data: { DeletedAt: new Date() },
+    });
   }
 
   hasAttempts(caseId: string) {

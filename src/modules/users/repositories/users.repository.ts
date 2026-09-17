@@ -54,25 +54,28 @@ export class UserRepository {
   }
 
   findById(id: string): Promise<User | null> {
-    return this.prismaService.user.findUnique({
+    return this.prismaService.user.findFirst({
       where: {
         Id: id,
+        DeletedAt: null,
       },
     });
   }
 
   findByEmail(email: string): Promise<User | null> {
-    return this.prismaService.user.findUnique({
+    return this.prismaService.user.findFirst({
       where: {
         Email: email,
+        DeletedAt: null,
       },
     });
   }
 
   findByUsername(username: string): Promise<User | null> {
-    return this.prismaService.user.findUnique({
+    return this.prismaService.user.findFirst({
       where: {
         UserName: username,
+        DeletedAt: null,
       },
     });
   }
@@ -133,9 +136,12 @@ export class UserRepository {
   }
 
   delete(id: string): Promise<User> {
-    return this.prismaService.user.delete({
+    return this.prismaService.user.update({
       where: {
         Id: id,
+      },
+      data: {
+        DeletedAt: new Date(),
       },
     });
   }
@@ -206,19 +212,22 @@ export class UserRepository {
   }
 
   private searchWhere(search: string): Prisma.UserWhereInput {
-    return search
-      ? {
-          OR: [
-            { UserName: { contains: search, mode: 'insensitive' } },
-            { Email: { contains: search, mode: 'insensitive' } },
-          ],
-        }
-      : {};
+    const deletedFilter: Prisma.UserWhereInput = { DeletedAt: null };
+    if (!search) {
+      return deletedFilter;
+    }
+    return {
+      DeletedAt: null,
+      OR: [
+        { UserName: { contains: search, mode: 'insensitive' } },
+        { Email: { contains: search, mode: 'insensitive' } },
+      ],
+    };
   }
 
   getLeaderboard(limit: number) {
     return this.prismaService.user.findMany({
-      where: { Role: 'USER' },
+      where: { Role: 'USER', DeletedAt: null },
       orderBy: [{ XpTotal: 'desc' }, { LongestStreak: 'desc' }],
       take: limit,
       select: {

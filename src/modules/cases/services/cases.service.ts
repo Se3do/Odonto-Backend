@@ -78,9 +78,6 @@ export class CasesService {
     const existing = await this.getOrThrow(id);
     await this.validationService.validateDelete(id);
     await this.repository.runTransaction(async (tx) => {
-      await this.repository.deleteCaseTests(tx, existing.Id);
-      await this.repository.deleteCaseTreatments(tx, existing.Id);
-      await this.repository.deleteCaseImages(tx, existing.Id);
       await this.repository.deleteCase(tx, existing.Id);
     });
     return this.toResponseDto(existing);

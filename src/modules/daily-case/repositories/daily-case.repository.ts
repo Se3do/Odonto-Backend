@@ -73,7 +73,9 @@ export class DailyCaseRepository {
   }
 
   findCaseById(caseId: string) {
-    return this.prismaService.case.findUnique({ where: { Id: caseId } });
+    return this.prismaService.case.findFirst({
+      where: { Id: caseId, DeletedAt: null },
+    });
   }
 
   hasCaseAssignment(caseId: string) {

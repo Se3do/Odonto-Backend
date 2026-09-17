@@ -33,29 +33,30 @@ enum CasePhase {
 }
 
 model User {
-  Id                String    @id @default(uuid())
-  UserName          String    @unique
-  Email             String    @unique
-  PasswordHash      String
-
-  Role              UserRole  @default(USER)
-
-  RefreshTokenHash     String?
-  RefreshTokenExpiresAt DateTime?
-  RefreshTokenFamily   String?
-
-  ResetTokenHash      String?
-  ResetTokenExpiresAt DateTime?
-
-  XpTotal           Int       @default(0)
-  CurrentStreak     Int       @default(0)
-  LongestStreak     Int       @default(0)
-  LastCompletedDate DateTime?
-
-  UserAttempt UserAttempt[]
-
-  @@index([Role, XpTotal(sort: Desc), LongestStreak(sort: Desc)])
-}
+    Id                String    @id @default(uuid())
+    UserName          String    @unique
+    Email             String    @unique
+    PasswordHash      String
+  
+    Role              UserRole  @default(USER)
+  
+    RefreshTokenHash     String?
+    RefreshTokenExpiresAt DateTime?
+    RefreshTokenFamily   String?
+  
+    ResetTokenHash      String?
+    ResetTokenExpiresAt DateTime?
+  
+    XpTotal           Int       @default(0)
+    CurrentStreak     Int       @default(0)
+    LongestStreak     Int       @default(0)
+    LastCompletedDate DateTime?
+    DeletedAt         DateTime?
+  
+    UserAttempt UserAttempt[]
+  
+    @@index([Role, XpTotal(sort: Desc), LongestStreak(sort: Desc)])
+  }
 
 model Specialty {
   Id   String @id @default(uuid())
@@ -87,16 +88,17 @@ model Treatment {
 }
 
 model Case {
-  Id                   String     @id @default(uuid())
-  Title                String
-  PatientHistory       String
-  Difficulty           Difficulty
-  DiagnosisExplanation String
-  CreatedAt            DateTime   @default(now())
-  AiGenerated          Boolean    @default(false)
-
-  DiagnosisId String
-  SpecialtyId String
+    Id                   String     @id @default(uuid())
+    Title                String
+    PatientHistory       String
+    Difficulty           Difficulty
+    DiagnosisExplanation String
+    CreatedAt            DateTime   @default(now())
+    AiGenerated          Boolean    @default(false)
+    DeletedAt            DateTime?
+  
+    DiagnosisId String
+    SpecialtyId String
 
   Diagnosis      Diagnosis       @relation(fields: [DiagnosisId], references: [Id])
   Specialty      Specialty       @relation(fields: [SpecialtyId], references: [Id])
