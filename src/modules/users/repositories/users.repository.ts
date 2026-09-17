@@ -8,6 +8,7 @@ export interface CreateUserData {
   passwordHash: string;
   refreshTokenHash?: string | null;
   refreshTokenExpiresAt?: Date | null;
+  refreshTokenFamily?: string | null;
   xpTotal?: number;
   currentStreak?: number;
   longestStreak?: number;
@@ -19,6 +20,7 @@ export interface UpdateUserData {
   email?: string;
   refreshTokenHash?: string | null;
   refreshTokenExpiresAt?: Date | null;
+  refreshTokenFamily?: string | null;
 }
 
 export interface UserExistsCriteria {
@@ -90,6 +92,10 @@ export class UserRepository {
       updateData.RefreshTokenExpiresAt = data.refreshTokenExpiresAt;
     }
 
+    if (data.refreshTokenFamily !== undefined) {
+      updateData.RefreshTokenFamily = data.refreshTokenFamily;
+    }
+
     return this.prismaService.user.update({
       where: {
         Id: id,
@@ -110,10 +116,12 @@ export class UserRepository {
     id: string,
     refreshTokenHash: string,
     refreshTokenExpiresAt: Date,
+    refreshTokenFamily: string,
   ): Promise<User> {
     return this.update(id, {
       refreshTokenHash,
       refreshTokenExpiresAt,
+      refreshTokenFamily,
     });
   }
 
@@ -121,6 +129,7 @@ export class UserRepository {
     return this.update(id, {
       refreshTokenHash: null,
       refreshTokenExpiresAt: null,
+      refreshTokenFamily: null,
     });
   }
 

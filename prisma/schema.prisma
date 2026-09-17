@@ -40,8 +40,9 @@ model User {
 
   Role              UserRole  @default(USER)
 
-  RefreshTokenHash  String?
+  RefreshTokenHash     String?
   RefreshTokenExpiresAt DateTime?
+  RefreshTokenFamily   String?
 
   XpTotal           Int       @default(0)
   CurrentStreak     Int       @default(0)

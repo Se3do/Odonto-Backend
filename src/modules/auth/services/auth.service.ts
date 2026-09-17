@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import {
   ConflictException,
   ForbiddenException,
@@ -56,7 +57,7 @@ export class AuthService {
     const user = await this.findUserForRefresh(payload);
     await this.assertRefreshTokenMatches(user, refreshTokenDto.refreshToken);
 
-    return this.issueTokensForUser(user);
+    return this.issueTokensForUser(user, user.RefreshTokenFamily ?? undefined);
   }
 
   async logout(userId: string): Promise<void> {
@@ -88,7 +89,10 @@ export class AuthService {
     return this.issueTokensForUser(user);
   }
 
-  private async issueTokensForUser(user: User): Promise<AuthResponseDto> {
+  private async issueTokensForUser(
+    user: User,
+    refreshTokenFamily?: string,
+  ): Promise<AuthResponseDto> {
     const accessToken = await this.tokenService.signAccessToken({
       sub: user.Id,
       email: user.Email,
@@ -99,13 +103,15 @@ export class AuthService {
       sub: user.Id,
     });
 
-    const refreshTokenHash = await this.passwordService.hash(refreshToken);
+    const refreshTokenHash = this.passwordService.hashToken(refreshToken);
     const refreshTokenExpiresAt = this.calculateRefreshTokenExpiresAt();
+    const family = refreshTokenFamily ?? randomUUID();
 
     await this.usersService.setRefreshToken(
       user.Id,
       refreshTokenHash,
       refreshTokenExpiresAt,
+      family,
     );
 
     const currentUser = await this.usersService.findById(user.Id);
@@ -151,13 +157,16 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token has expired');
     }
 
-    const matches = await this.passwordService.compare(
+    const matches = this.passwordService.compareToken(
       refreshToken,
       user.RefreshTokenHash,
     );
 
     if (!matches) {
-      throw new UnauthorizedException('Refresh token is invalid');
+      await this.usersService.clearRefreshToken(user.Id);
+      throw new UnauthorizedException(
+        'Refresh token reuse detected; all sessions have been revoked',
+      );
     }
   }
 

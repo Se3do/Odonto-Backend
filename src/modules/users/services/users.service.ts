@@ -118,12 +118,14 @@ export class UsersService {
     userId: string,
     refreshTokenHash: string,
     refreshTokenExpiresAt: Date,
+    refreshTokenFamily: string,
   ): Promise<void> {
     await this.getUserOrThrow(userId);
     await this.userRepository.setRefreshToken(
       userId,
       refreshTokenHash,
       refreshTokenExpiresAt,
+      refreshTokenFamily,
     );
   }
 
