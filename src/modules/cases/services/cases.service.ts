@@ -15,6 +15,19 @@ import {
 } from '../dto/case-response.dto';
 import { CASE_IMAGE_TYPES } from '../cases-upload.config';
 import { v2 as cloudinary } from 'cloudinary';
+import { CaseImage, ImageType, Prisma } from '@prisma/client';
+
+type CaseWithRelationsPayload = Prisma.CaseGetPayload<{
+  include: {
+    Specialty: { select: { Id: true; Name: true } };
+    Diagnosis: { select: { Id: true; Name: true } };
+    CaseTests: { include: { Test: { select: { Id: true; Name: true } } } };
+    CaseTreatments: {
+      include: { Treatment: { select: { Id: true; Name: true } } };
+    };
+    CaseImages: { select: { Id: true; Url: true; ImageType: true } };
+  };
+}>;
 
 let cloudinaryConfigured = false;
 function ensureCloudinaryConfig() {
@@ -135,8 +148,13 @@ export class CasesService {
       (resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: 'odonto/cases' },
-          (error, result) =>
-            error ? reject(error) : resolve(result as { secure_url: string }),
+          (error, result) => {
+            if (error) {
+              reject(new Error(error.message));
+              return;
+            }
+            resolve(result as { secure_url: string });
+          },
         );
         stream.end(file.buffer);
       },
@@ -144,7 +162,7 @@ export class CasesService {
     const image = await this.repository.createImage(
       caseId,
       uploaded.secure_url,
-      type,
+      type as ImageType,
     );
     return this.toImageDto(image);
   }
@@ -176,7 +194,7 @@ export class CasesService {
     return c;
   }
 
-  private toResponseDto(c: any): CaseResponseDto {
+  private toResponseDto(c: CaseWithRelationsPayload): CaseResponseDto {
     return {
       id: c.Id,
       title: c.Title,
@@ -187,22 +205,24 @@ export class CasesService {
       specialtyName: c.Specialty.Name,
       diagnosisId: c.Diagnosis.Id,
       diagnosisName: c.Diagnosis.Name,
-      tests: c.CaseTests.map((ct: any) => ({
+      tests: c.CaseTests.map((ct) => ({
         testId: ct.Test.Id,
         testName: ct.Test.Name,
         isCorrect: ct.IsCorrect,
       })),
-      treatments: c.CaseTreatments.map((ct: any) => ({
+      treatments: c.CaseTreatments.map((ct) => ({
         treatmentId: ct.Treatment.Id,
         treatmentName: ct.Treatment.Name,
         isCorrect: ct.IsCorrect,
       })),
-      images: c.CaseImages.map((ci: any) => this.toImageDto(ci)),
+      images: c.CaseImages.map((ci) => this.toImageDto(ci)),
       createdAt: c.CreatedAt,
     };
   }
 
-  private toImageDto(image: any): CaseImageResponseDto {
+  private toImageDto(
+    image: Pick<CaseImage, 'Id' | 'Url' | 'ImageType'>,
+  ): CaseImageResponseDto {
     return {
       id: image.Id,
       url: image.Url,

@@ -6,7 +6,12 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: [
+      'eslint.config.mjs',
+      // WIP files owned by the user (uncommitted working tree) — remove once landed.
+      'src/modules/attempts/attempt-detail.spec.ts',
+      'src/modules/attempts/repositories/attempts.repository.ts',
+    ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

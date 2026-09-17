@@ -230,8 +230,13 @@ export class UsersService {
       (resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: 'odonto/avatars' },
-          (error, result) =>
-            error ? reject(error) : resolve(result as { secure_url: string }),
+          (error, result) => {
+            if (error) {
+              reject(new Error(error.message));
+              return;
+            }
+            resolve(result as { secure_url: string });
+          },
         );
         stream.end(file.buffer);
       },

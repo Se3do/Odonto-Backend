@@ -19,7 +19,6 @@ import { TreatDto } from '../dto/treat.dto';
 import {
   AttemptResponseDto,
   AttemptDetailDto,
-  AttemptListItemDto,
   AttemptAnalyticsDto,
   PaginatedAttemptListDto,
   StartAttemptResponseDto,

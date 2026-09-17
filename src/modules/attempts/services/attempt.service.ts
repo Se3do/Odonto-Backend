@@ -4,7 +4,7 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { CasePhase } from '@prisma/client';
+import { CasePhase, Prisma } from '@prisma/client';
 import { AttemptsRepository } from '../repositories/attempts.repository';
 import { AttemptValidationService } from './attempt-validation.service';
 import { AttemptScoringService } from './attempt-scoring.service';
@@ -19,7 +19,6 @@ import {
   AttemptTestGroup,
   AttemptTreatmentGroup,
   AttemptDetailDto,
-  AttemptListItemDto,
   AttemptAnalyticsDto,
   PaginatedAttemptListDto,
   StartAttemptResponseDto,
@@ -28,6 +27,31 @@ import {
   TreatResponseDto,
 } from '../dto/attempt-response.dto';
 import { ValidatedAttemptContext, ScoringResult } from '../types/attempt.types';
+
+type AttemptWithCasePayload = Prisma.UserAttemptGetPayload<{
+  include: {
+    User: {
+      select: {
+        LastCompletedDate: true;
+        CurrentStreak: true;
+        LongestStreak: true;
+      };
+    };
+    Case: {
+      include: {
+        CaseImages: true;
+        CaseTests: { include: { Test: true } };
+        CaseTreatments: { include: { Treatment: true } };
+        Diagnosis: { select: { Id: true; Name: true } };
+      };
+    };
+    Diagnosis: { select: { Id: true; Name: true } };
+    AttemptTests: { include: { CaseTest: { include: { Test: true } } } };
+    AttemptTreatments: {
+      include: { CaseTreatment: { include: { Treatment: true } } };
+    };
+  };
+}>;
 
 @Injectable()
 export class AttemptService {
@@ -446,7 +470,7 @@ export class AttemptService {
     };
   }
 
-  private toDetailDto(a: any): AttemptDetailDto {
+  private toDetailDto(a: AttemptWithCasePayload): AttemptDetailDto {
     return {
       id: a.Id,
       score: a.Score ?? null,
@@ -473,18 +497,18 @@ export class AttemptService {
       diagnosis: a.Diagnosis
         ? { id: a.Diagnosis.Id, name: a.Diagnosis.Name }
         : null,
-      tests: a.Case.CaseTests.map((ct: any) => ({
+      tests: a.Case.CaseTests.map((ct) => ({
         testId: ct.TestId,
         testName: ct.Test.Name,
         isCorrect: ct.IsCorrect,
         result: ct.TestResult,
       })),
-      treatments: a.Case.CaseTreatments.map((ct: any) => ({
+      treatments: a.Case.CaseTreatments.map((ct) => ({
         treatmentId: ct.TreatmentId,
         treatmentName: ct.Treatment.Name,
         isCorrect: ct.IsCorrect,
       })),
-      orderedTests: a.AttemptTests.map((at: any) => ({
+      orderedTests: a.AttemptTests.map((at) => ({
         testId: at.TestId,
         testName: at.CaseTest.Test.Name,
         result: at.CaseTest.TestResult,
@@ -494,22 +518,19 @@ export class AttemptService {
 
   private buildTreatResponse(
     scoringResult: ScoringResult,
-    attempt: any,
+    attempt: AttemptWithCasePayload,
     submittedTreatmentIds: string[],
     xpEarned: number,
   ): TreatResponseDto {
-    const caseTests = attempt.Case?.CaseTests ?? [];
-    const caseTreatments = attempt.Case?.CaseTreatments ?? [];
-    const orderedTestIds = attempt.AttemptTests.map((at: any) => at.TestId);
+    const caseTests = attempt.Case.CaseTests;
+    const caseTreatments = attempt.Case.CaseTreatments;
+    const orderedTestIds = attempt.AttemptTests.map((at) => at.TestId);
 
     const testNameMap = new Map<string, string>(
-      caseTests.map((ct: any) => [ct.TestId, ct.Test.Name as string]),
+      caseTests.map((ct) => [ct.TestId, ct.Test.Name]),
     );
     const treatmentNameMap = new Map<string, string>(
-      caseTreatments.map((ct: any) => [
-        ct.TreatmentId,
-        ct.Treatment.Name as string,
-      ]),
+      caseTreatments.map((ct) => [ct.TreatmentId, ct.Treatment.Name]),
     );
 
     const tests = new AttemptTestGroup();

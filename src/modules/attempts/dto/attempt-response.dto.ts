@@ -1,5 +1,4 @@
 import { CasePhase } from '@prisma/client';
-import { TestResult, TreatmentResult } from '../types/attempt.types';
 
 export class AttemptTestGroup {
   correct: { testId: string; testName: string }[] = [];

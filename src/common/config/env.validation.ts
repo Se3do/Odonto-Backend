@@ -14,11 +14,23 @@ export const envValidationSchema = Joi.object({
   CLOUDINARY_URL: Joi.string().optional(),
 });
 
+type ValidatedEnv = {
+  NODE_ENV?: string;
+  PORT?: number;
+  DATABASE_URL: string;
+  JWT_ACCESS_SECRET: string;
+  JWT_REFRESH_SECRET: string;
+  JWT_ACCESS_EXPIRES_IN?: string;
+  JWT_REFRESH_EXPIRES_IN?: string;
+  CORS_ORIGIN?: string;
+  CLOUDINARY_URL?: string;
+};
+
 export function validateEnv(config: Record<string, unknown>) {
   const { error, value } = envValidationSchema.validate(config, {
     allowUnknown: true,
     abortEarly: false,
-  });
+  }) as { error?: Joi.ValidationError; value: ValidatedEnv };
 
   if (error) {
     throw new Error(

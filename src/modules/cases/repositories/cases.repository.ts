@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Difficulty, ImageType, Prisma } from '@prisma/client';
 import { PrismaService } from '../../../common/database/prisma.service';
 import { CaseQueryDto } from '../dto/case-query.dto';
 import { UpdateCaseDto } from '../dto/update-case.dto';
@@ -18,7 +18,7 @@ interface CreateCaseData {
   title: string;
   patientHistory: string;
   diagnosisExplanation: string;
-  difficulty: string;
+  difficulty: Difficulty;
   diagnosisId: string;
   specialtyId: string;
 }
@@ -39,7 +39,7 @@ export class CasesRepository {
         Title: data.title,
         PatientHistory: data.patientHistory,
         DiagnosisExplanation: data.diagnosisExplanation,
-        Difficulty: data.difficulty as any,
+        Difficulty: data.difficulty,
         Diagnosis: { connect: { Id: data.diagnosisId } },
         Specialty: { connect: { Id: data.specialtyId } },
       },
@@ -164,8 +164,7 @@ export class CasesRepository {
       updateData.PatientHistory = data.patientHistory;
     if (data.diagnosisExplanation !== undefined)
       updateData.DiagnosisExplanation = data.diagnosisExplanation;
-    if (data.difficulty !== undefined)
-      updateData.Difficulty = data.difficulty as any;
+    if (data.difficulty !== undefined) updateData.Difficulty = data.difficulty;
     if (data.diagnosisId !== undefined)
       updateData.Diagnosis = { connect: { Id: data.diagnosisId } };
     if (data.specialtyId !== undefined)
@@ -190,9 +189,9 @@ export class CasesRepository {
     });
   }
 
-  createImage(caseId: string, url: string, imageType: string) {
+  createImage(caseId: string, url: string, imageType: ImageType) {
     return this.prismaService.caseImage.create({
-      data: { CaseId: caseId, Url: url, ImageType: imageType as any },
+      data: { CaseId: caseId, Url: url, ImageType: imageType },
     });
   }
 

@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { DailyCaseRepository } from '../repositories/daily-case.repository';
 import { CreateDailyCaseDto } from '../dto/create-daily-case.dto';
 import { UpdateDailyCaseDto } from '../dto/update-daily-case.dto';
@@ -11,6 +12,12 @@ import {
   DailyCaseResponseDto,
   TodayDailyCaseResponseDto,
 } from '../dto/daily-case-response.dto';
+
+type DailyCaseWithCasePayload = Prisma.DailyCaseGetPayload<{
+  include: {
+    Case: { select: { Id: true; Title: true; Difficulty: true } };
+  };
+}>;
 
 @Injectable()
 export class DailyCaseService {
@@ -116,7 +123,7 @@ export class DailyCaseService {
     return date;
   }
 
-  private toResponseDto(d: any): DailyCaseResponseDto {
+  private toResponseDto(d: DailyCaseWithCasePayload): DailyCaseResponseDto {
     return {
       id: d.Id,
       date: d.Date.toISOString(),
